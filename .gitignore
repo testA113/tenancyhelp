@@ -1,0 +1,15 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# VS Code
+.vscode/
+
+# Log files
+*.log
+
+# macOS
+.DS_Store
