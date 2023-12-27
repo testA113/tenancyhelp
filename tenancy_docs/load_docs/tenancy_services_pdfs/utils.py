@@ -1,8 +1,9 @@
 import hashlib
 import json
 import logging
+import os
 import sqlite3
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import requests
 
@@ -17,7 +18,14 @@ def remove_old_docs(url_array: List[str]) -> None:
     Returns:
         None
     """
-    conn = sqlite3.connect("document_metadata.db")
+    db_file = "document_metadata.db"
+    if not os.path.exists(db_file):
+        logging.info(
+            "No document metadata database found, skipping removal of old docs"
+        )
+        return
+
+    conn = sqlite3.connect(db_file)
     c = conn.cursor()
 
     c.execute("SELECT doc_url FROM document_metadata")
@@ -29,10 +37,6 @@ def remove_old_docs(url_array: List[str]) -> None:
         url = metadata_entry[0]
         if url not in url_array:
             delete_document_metadata(None, url, None)
-
-
-import sqlite3
-from typing import Optional
 
 
 def delete_document_metadata(
@@ -49,6 +53,11 @@ def delete_document_metadata(
     Returns:
         None
     """
+    db_file = "document_metadata.db"
+    if not os.path.exists(db_file):
+        logging.error("No document metadata database found")
+        return
+
     conn = sqlite3.connect("document_metadata.db")
     c = conn.cursor()
 
@@ -61,9 +70,6 @@ def delete_document_metadata(
 
     conn.commit()
     conn.close()
-
-
-import sqlite3
 
 
 def add_document_metadata(
@@ -82,6 +88,11 @@ def add_document_metadata(
     Returns:
         None
     """
+    db_file = "document_metadata.db"
+    if not os.path.exists(db_file):
+        logging.error("No document metadata database found")
+        return
+
     conn = sqlite3.connect("document_metadata.db")
     c = conn.cursor()
 
@@ -119,13 +130,16 @@ def add_unique_document_metadata(
 
     metadata = get_document_metadata_from_url(doc_url)
     if not metadata:
+        logging.info(f"Adding new document {title}, {doc_url}")
         add_document_metadata(title, doc_type, doc_url, fetched_at, new_hash)
         return
 
     existing_hash = metadata[5]
     if new_hash == existing_hash:
+        logging.info(f"Document {title}, {doc_url} has not changed")
         return
 
+    logging.info(f"Document {title}, {doc_url} has changed, updating")
     delete_document_metadata(None, doc_url, None)
     add_document_metadata(title, doc_type, doc_url, fetched_at, new_hash)
     return
@@ -141,11 +155,42 @@ def get_document_metadata_from_url(doc_url: str) -> Optional[Tuple]:
     Returns:
         Optional[Tuple]: A tuple containing the document metadata if found, otherwise None.
     """
+    db_file = "document_metadata.db"
+    if not os.path.exists(db_file):
+        logging.error("No document metadata database found")
+        return
+
     conn = sqlite3.connect("document_metadata.db")
     c = conn.cursor()
 
     c.execute("SELECT * FROM document_metadata WHERE doc_url=?", (doc_url,))
     documentMetadata = c.fetchone()
+
+    conn.close()
+
+    return documentMetadata
+
+
+def get_all_document_metadata(file_path: str = "document_metadata.db") -> List[Dict]:
+    """
+    Retrieves all document metadata from the database.
+
+    Returns:
+        List[Tuple]: A list of tuples containing the document metadata.
+    """
+    if not os.path.exists(file_path):
+        print("error")
+        logging.error("No document metadata database found")
+        return
+
+    conn = sqlite3.connect(file_path)
+    conn.row_factory = (
+        sqlite3.Row
+    )  # This enables column access by name: row['column_name']
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM document_metadata")
+    documentMetadata = c.fetchall()
 
     conn.close()
 
@@ -193,7 +238,7 @@ def save_cookies(cookie_name: str, cookie_value: str) -> None:
         json.dump({cookie_name: cookie_value}, f)
 
 
-def get_cookie() -> Tuple[str, str]:
+def get_cookies() -> Tuple[str, str]:
     """
     Retrieves the cookie name and value from the 'cookies.json' file.
 
