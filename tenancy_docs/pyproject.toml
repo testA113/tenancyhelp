@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "tenancy-docs"
+version = "0.1.0"
+description = ""
+authors = ["testa113 <testa113>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+chromadb = "^0.4.21"
+sentence-transformers = "^2.2.2"
+pydantic = "^2.5.3"
+llama-index = "^0.9.21"
+
+[tool.poetry.group.dev.dependencies]
+python = "^3.11"
+mypy = "^1.2"
+ruff = "^0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

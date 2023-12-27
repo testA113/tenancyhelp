@@ -1,13 +1,12 @@
-from datetime import datetime
-import json
 import logging
+from datetime import datetime
 from bs4 import BeautifulSoup
-from load_docs.tenancy_services_pdfs.utils import save_cookies
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver import WebDriver
+
+from utils import save_cookies
 
 skipTerms = [
     "hindi",
@@ -40,7 +39,7 @@ def get_web_page() -> None:
     driver.get("https://www.tenancy.govt.nz/forms-and-resources")
 
     # Save the cookies to a json file
-    save_cookies(driver)
+    save_tenancy_cookies(driver)
 
     # Wait for the page to load
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "tr")))
@@ -133,7 +132,7 @@ def get_links_from_html() -> None:
 
 
 # Get the cooke with a name including 'incap_ses_' save it to a json file
-def save_tenancy_cookies(driver: WebDriver) -> None:
+def save_tenancy_cookies(driver) -> None:
     """
     Save the tenancy cookies from the WebDriver session.
 

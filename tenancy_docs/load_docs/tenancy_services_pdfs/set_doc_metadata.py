@@ -1,13 +1,13 @@
 import logging
 import csv
 
-from utils import get_cookie, remove_old_docs, add_unique_document_metadata
+from utils import get_cookies, remove_old_docs, add_unique_document_metadata
 
 
 import csv
 
 
-def clear_old_docs() -> None:
+def clear_old_doc_metadata() -> None:
     """
     Clears old documents by reading the new URLs from a CSV file and removing any documents that are not in the CSV file.
     """
@@ -19,11 +19,11 @@ def clear_old_docs() -> None:
         remove_old_docs(new_docs_url_array)
 
 
-def set_metadata() -> None:
+def set_doc_metadata() -> None:
     """
     Sets the metadata for the documents in the database.
     """
-    cookie_name, cookie_value = get_cookie()
+    cookie_name, cookie_value = get_cookies()
     with open("links.csv", "r") as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
@@ -43,5 +43,5 @@ def set_metadata() -> None:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    clear_old_docs()
-    set_metadata()
+    clear_old_doc_metadata()
+    set_doc_metadata()
