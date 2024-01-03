@@ -10,14 +10,14 @@ from llama_index.vector_stores import ChromaVectorStore
 from llama_index.storage.storage_context import StorageContext
 from llama_index.embeddings import HuggingFaceEmbedding
 import chromadb
-from typing import List
+
+from tenancy_docs.index_docs.utils import get_embed_model
 
 
 def query_docs():
     os.environ["TOKENIZERS_PARALLELISM"] = "false"
-    # define embedding function
-    embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-base-en-v1.5")
-    # the loading and the querying should be in separate scripts
+    embed_model = get_embed_model()
+
     # load from disk
     chroma_client = chromadb.PersistentClient(path="../index_docs/chroma_db")
     chroma_collection = chroma_client.get_or_create_collection("tenancy_docs")
