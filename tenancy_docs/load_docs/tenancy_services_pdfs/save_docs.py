@@ -22,11 +22,7 @@ def save_docs_locally() -> None:
 
     # save the pdfs to the pdf directory
     for doc in docs:
-        # get the url and file name
-        file_name = doc["title"]
         doc_url = doc["doc_url"]
-
-        # save the file
         save_file(doc_url=doc_url)
 
 
