@@ -64,22 +64,6 @@ def get_web_page() -> None:
 
 
 def get_links_from_html() -> None:
-    """
-    Extracts links from an HTML file and saves them to a CSV file.
-
-    Reads the content of an HTML file, finds all table rows containing anchor tags with the class 'pdf',
-    extracts the document title and URL, and saves them to a CSV file along with the current timestamp.
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-    # Rest of the code...
-
-
-def get_links_from_html() -> None:
     # Open the HTML file and read its content
     with open("links.html", "r") as f:
         html_doc = f.read()

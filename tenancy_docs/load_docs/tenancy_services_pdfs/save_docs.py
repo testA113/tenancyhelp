@@ -2,21 +2,15 @@ import os
 import shutil
 
 import requests
+from tenancy_docs.load_docs.utils import get_all_document_metadata
 
-from utils import get_all_document_metadata, get_cookies
+from utils import get_cookies
 
 
 def save_docs_locally() -> None:
     """
     Saves the unique pdfs to local storage.
     """
-    # clear the docs directory if it exists
-    if os.path.exists("docs"):
-        shutil.rmtree("docs")
-
-    # create the pdf directory
-    os.mkdir("docs")
-
     # get the pdfs from the database
     docs = get_all_document_metadata()
 
@@ -41,5 +35,5 @@ def save_file(doc_url: str) -> None:
     response = requests.get(doc_url, stream=True, cookies={cookie_name: cookie_value})
     # save the file in the pdfs directory
     file_name = doc_url.split("/")[-1]
-    with open(f"docs/{file_name}", "wb") as f:
+    with open(f"../docs/{file_name}", "wb") as f:
         f.write(response.content)

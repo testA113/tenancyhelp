@@ -22,6 +22,7 @@ def init_document_metadata_db() -> None:
                 title TEXT NOT NULL,
                 doc_type TEXT NOT NULL,
                 doc_url TEXT NOT NULL,
+                source TEXT NOT NULL,
                 fetched_at TEXT NOT NULL,
                 doc_sha256_hash TEXT NOT NULL
             )
@@ -33,3 +34,7 @@ def init_document_metadata_db() -> None:
 
         # Close the connection to the database
         conn.close()
+
+
+if __name__ == "__main__":
+    init_document_metadata_db()
