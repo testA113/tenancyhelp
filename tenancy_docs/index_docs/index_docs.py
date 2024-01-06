@@ -14,9 +14,7 @@ from llama_index.storage.storage_context import StorageContext
 import chromadb
 from typing import List
 from tenancy_docs.index_docs.utils import get_embed_model
-
-
-from tenancy_docs.load_docs.tenancy_services_pdfs.utils import get_all_document_metadata
+from tenancy_docs.load_docs.utils import get_all_document_metadata
 
 
 def index_docs():

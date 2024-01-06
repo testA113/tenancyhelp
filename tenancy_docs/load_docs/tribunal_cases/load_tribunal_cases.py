@@ -4,8 +4,13 @@ import logging
 import requests
 from typing import List, Dict
 
+from tenancy_docs.load_docs.tribunal_cases.save_doc_metadata import (
+    clear_old_doc_metadata,
+    save_cases_metadata,
+)
 
-def load_tribunal_cases() -> None:
+
+def load_tribunal_cases() -> List[Dict[str, str]]:
     base_url = "https://forms.justice.govt.nz/solr/TTV2/select"
     headers = {"Accept": "application/json"}
     queries = get_queries()
@@ -16,8 +21,8 @@ def load_tribunal_cases() -> None:
         cases += res_dict["response"]["docs"]
 
     unique_cases = get_unique_cases(cases)
-
     logging.info(f"Found {len(unique_cases)} cases")
+    return unique_cases
 
 
 def get_unique_cases(docs: List[Dict[str, str]]) -> List[Dict[str, str]]:
@@ -41,25 +46,25 @@ def get_unique_cases(docs: List[Dict[str, str]]) -> List[Dict[str, str]]:
 def get_queries() -> List[Dict[str, str]]:
     return [
         {
-            "rows": "100000",
+            "rows": "10",
             "sort": "decisionDateIndex_l desc",
             "q": 'costAwarded_s:"Applicant"',
             "wt": "json",
         },
         {
-            "rows": "100000",
+            "rows": "10",
             "sort": "decisionDateIndex_l desc",
             "q": 'costAwarded_s:"Respondent"',
             "wt": "json",
         },
         {
-            "rows": "100000",
+            "rows": "10",
             "sort": "decisionDateIndex_l desc",
             "q": 'costAwarded_s:"Landlord"',
             "wt": "json",
         },
         {
-            "rows": "100000",
+            "rows": "10",
             "sort": "decisionDateIndex_l desc",
             "q": 'costAwarded_s:"Tenant"',
             "wt": "json",
@@ -69,4 +74,6 @@ def get_queries() -> List[Dict[str, str]]:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    load_tribunal_cases()
+    cases = load_tribunal_cases()
+    clear_old_doc_metadata(cases)
+    save_cases_metadata(cases)

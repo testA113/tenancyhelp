@@ -1,9 +1,9 @@
 import logging
 import csv
+from tenancy_docs.load_docs.utils import remove_old_docs
 
 from utils import (
     get_cookies,
-    remove_old_docs,
     add_unique_document_metadata,
 )
 
@@ -17,10 +17,10 @@ def clear_old_doc_metadata() -> None:
         new_docs_url_array = []
         for row in reader:
             new_docs_url_array.append(row["doc_url"])
-        remove_old_docs(new_docs_url_array)
+        remove_old_docs(url_array=new_docs_url_array, source="tenancy_services_pdfs")
 
 
-def set_doc_metadata() -> None:
+def save_doc_metadata() -> None:
     """
     Sets the metadata for the documents in the database.
     """
@@ -36,6 +36,7 @@ def set_doc_metadata() -> None:
                 title=title,
                 doc_type=doc_type,
                 doc_url=doc_url,
+                source="tenancy_services_pdfs",
                 fetched_at=fetched_at,
                 cookie_name=cookie_name,
                 cookie_value=cookie_value,
@@ -45,4 +46,4 @@ def set_doc_metadata() -> None:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     clear_old_doc_metadata()
-    set_doc_metadata()
+    save_doc_metadata()
