@@ -33,7 +33,10 @@ def query_docs():
     response = query_engine.query(
         "I accidentally sent the house on fire. Am I responsible for costs?"
     )
-    print(response.source_nodes)
+    nodes = response.source_nodes
+    doc_metadata = [node.metadata for node in nodes]
+    print(doc_metadata)
+    print("\n")
     print(response.response)
 
 
