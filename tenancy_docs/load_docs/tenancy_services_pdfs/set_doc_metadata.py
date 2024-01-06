@@ -1,10 +1,11 @@
 import logging
 import csv
 
-from utils import get_cookies, remove_old_docs, add_unique_document_metadata
-
-
-import csv
+from utils import (
+    get_cookies,
+    remove_old_docs,
+    add_unique_document_metadata,
+)
 
 
 def clear_old_doc_metadata() -> None:

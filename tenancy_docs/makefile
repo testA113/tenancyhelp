@@ -1,10 +1,17 @@
-.PHONY: all load_docs index_docs query_docs
+.PHONY: load_docs index_docs query_docs load_tenancy_pdfs load_tribunal_cases
 
-load_docs: load_docs/tenancy_services_pdfs/load_docs.py
-	cd load_docs/tenancy_services_pdfs && poetry run python load_docs.py
+# Loading docs
+load_docs: 
+	make load_tenancy_pdfs
+load_tenancy_pdfs: load_docs/tenancy_services_pdfs/load_tenancy_services_pdfs.py
+	cd load_docs/tenancy_services_pdfs && poetry run python load_tenancy_services_pdfs.py
+load_tribunal_cases: load_docs/tribunal_cases/load_tribunal_cases.py
+	cd load_docs/tribunal_cases && poetry run python load_tribunal_cases.py
 
+# Indexing docs
 index_docs: index_docs/index_docs.py
 	cd index_docs/ && poetry run python index_docs.py
 
+# Querying docs
 query_docs: query_docs/query_docs.py
 	cd query_docs/ && poetry run python query_docs.py

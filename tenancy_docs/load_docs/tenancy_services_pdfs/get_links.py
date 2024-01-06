@@ -8,16 +8,6 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from utils import save_cookies
 
-skipTerms = [
-    "hindi",
-    "korean",
-    "samoan",
-    "simplified-chinese",
-    "tongan",
-    "maori",
-    "chinese-simplified",
-]
-
 
 def get_web_page() -> None:
     """
@@ -114,9 +104,6 @@ def get_links_from_html() -> None:
             if not anchor_element:
                 continue
             doc_url = "https://www.tenancy.govt.nz" + anchor_element.get("href")
-            # Skip the file if it contains any of the skip terms
-            if any(term in doc_url for term in skipTerms):
-                continue
 
             # Get the title of the document (class 'listing_result_title')
             title_element = pdf_row.find("p", class_="listing_result_title")

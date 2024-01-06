@@ -1,3 +1,0 @@
-selenium==4.14.0
-beautifulsoup4==4.11.1
-llama-index==0.9.20
