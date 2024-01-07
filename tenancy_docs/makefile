@@ -5,6 +5,7 @@ load_docs:
 	make initialise_db
 	make initiialise_storage
 	make load_tenancy_pdfs
+	make load_tribunal_cases
 initialise_db: load_docs/init_database.py
 	cd load_docs/ && poetry run python init_database.py
 initiialise_storage: load_docs/init_storage.py

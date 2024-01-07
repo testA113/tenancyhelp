@@ -121,11 +121,43 @@ def get_all_document_metadata(file_path: str = "../document_metadata.db") -> Lis
     c = conn.cursor()
 
     c.execute("SELECT * FROM document_metadata")
-    documentMetadata = c.fetchall()
+    document_metadata = c.fetchall()
 
     conn.close()
 
-    return documentMetadata
+    return document_metadata
+
+
+def get_all_document_metadata_from_source(
+    source: str, file_path: str = "../document_metadata.db"
+) -> List[Dict]:
+    """
+    Retrieves all document metadata from the database for the given source.
+
+    Args:
+        source (str): The source of the documents.
+        file_path (str): The path to the database file.
+
+    Returns:
+        List[Tuple]: A list of tuples containing the document metadata.
+    """
+    if not os.path.exists(file_path):
+        print("error")
+        logging.error("No document metadata database found")
+        return
+
+    conn = sqlite3.connect(file_path)
+    conn.row_factory = (
+        sqlite3.Row
+    )  # This enables column access by name: row['column_name']
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM document_metadata WHERE source=?", (source,))
+    document_metadata = c.fetchall()
+
+    conn.close()
+
+    return document_metadata
 
 
 def get_document_metadata_from_url(doc_url: str) -> Optional[Tuple]:
@@ -147,8 +179,35 @@ def get_document_metadata_from_url(doc_url: str) -> Optional[Tuple]:
     c = conn.cursor()
 
     c.execute("SELECT * FROM document_metadata WHERE doc_url=?", (doc_url,))
-    documentMetadata = c.fetchone()
+    document_metadata = c.fetchone()
 
     conn.close()
 
-    return documentMetadata
+    return document_metadata
+
+
+def update_doc_url(doc_url: str, new_doc_url: str) -> None:
+    """
+    Updates the doc_url for the given document.
+
+    Args:
+        doc_url (str): The URL of the document.
+        new_doc_url (str): The new URL of the document.
+
+    Returns:
+        None
+    """
+    db_file = "../document_metadata.db"
+    if not os.path.exists(db_file):
+        logging.error("No document metadata database found")
+        return
+
+    conn = sqlite3.connect(db_file)
+    c = conn.cursor()
+
+    c.execute(
+        "UPDATE document_metadata SET doc_url=? WHERE doc_url=?", (new_doc_url, doc_url)
+    )
+
+    conn.commit()
+    conn.close()

@@ -13,8 +13,8 @@ def load_tenancy_services_pdfs() -> None:
     """
     Loads the tenancy pdf documents into the database and saves them locally.
     """
-    # get_web_page()
-    # get_links_from_html()
+    get_web_page()
+    get_links_from_html()
     clear_old_doc_metadata()
     save_doc_metadata()
     save_docs_locally()
