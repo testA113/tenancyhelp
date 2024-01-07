@@ -18,7 +18,6 @@ from tenancy_docs.load_docs.utils import get_all_document_metadata
 
 
 def index_docs():
-    os.environ["TOKENIZERS_PARALLELISM"] = "false"
     OpenAIEmbedding.api_key = os.environ["OPENAI_API_KEY"]
     embed_model = get_embed_model()
 
@@ -33,7 +32,7 @@ def index_docs():
     )
 
     loaded_docs = get_all_document_metadata(
-        file_path="../load_docs/tenancy_services_pdfs/document_metadata.db"
+        file_path="../load_docs/document_metadata.db"
     )
 
     # If there are docs in the collection that aren't in the database, delete them from the collection
@@ -68,7 +67,7 @@ def index_docs():
 
             # otherwise, add the document to the index
             doc_file_name = doc["doc_url"].split("/")[-1]
-            doc_file_path = f"../load_docs/tenancy_services_pdfs/docs/{doc_file_name}"
+            doc_file_path = f"../load_docs/docs/{doc_file_name}"
             document = SimpleDirectoryReader(
                 input_files=[doc_file_path],
                 file_metadata=lambda _: {
@@ -76,6 +75,7 @@ def index_docs():
                     "doc_url": doc["doc_url"],
                     "title": doc["title"],
                     "doc_type": doc["doc_type"],
+                    "source": doc["source"],
                     "doc_sha256_hash": doc["doc_sha256_hash"],
                 },
             ).load_data()

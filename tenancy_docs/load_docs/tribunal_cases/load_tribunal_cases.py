@@ -4,10 +4,11 @@ import logging
 import requests
 from typing import List, Dict
 
-from tenancy_docs.load_docs.tribunal_cases.save_doc_metadata import (
-    clear_old_doc_metadata,
+from tenancy_docs.load_docs.tribunal_cases.save_case_metadata import (
+    clear_old_case_metadata,
     save_cases_metadata,
 )
+from tenancy_docs.load_docs.tribunal_cases.save_cases import save_cases_locally
 
 
 def load_tribunal_cases() -> List[Dict[str, str]]:
@@ -75,5 +76,6 @@ def get_queries() -> List[Dict[str, str]]:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     cases = load_tribunal_cases()
-    clear_old_doc_metadata(cases)
+    clear_old_case_metadata(cases)
     save_cases_metadata(cases)
+    save_cases_locally()
