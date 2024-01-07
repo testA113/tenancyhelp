@@ -130,7 +130,7 @@ def get_all_document_metadata(file_path: str = "../document_metadata.db") -> Lis
 
 def get_all_document_metadata_from_source(
     source: str, file_path: str = "../document_metadata.db"
-) -> List[Dict]:
+) -> List[Dict] | None:
     """
     Retrieves all document metadata from the database for the given source.
 
@@ -144,7 +144,7 @@ def get_all_document_metadata_from_source(
     if not os.path.exists(file_path):
         print("error")
         logging.error("No document metadata database found")
-        return
+        return None
 
     conn = sqlite3.connect(file_path)
     conn.row_factory = (
