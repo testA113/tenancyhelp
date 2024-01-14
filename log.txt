@@ -1,0 +1,4 @@
+14/11/24 I'm currently trying out the fusion retriever to query the tenancy docs. 
+The fusion retriever didn't work, but RouterRetriever did. It decides one or many retrievers to use for a chat_engine. For example it will only include cases if I ask for cases that relate to the problem that I'm facing as a tenant.
+Next I need to add the residential tenancy act to the index, and also the remaining tenancy tribunal docs
+After that I need to 
