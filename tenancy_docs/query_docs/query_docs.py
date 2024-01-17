@@ -4,6 +4,7 @@ from llama_index import (
     VectorStoreIndex,
     ServiceContext,
 )
+from llama_index.memory import ChatMemoryBuffer
 from llama_index.vector_stores import ChromaVectorStore
 from llama_index.llms import OpenAI, ChatMessage, MessageRole
 from llama_index.tools import RetrieverTool
@@ -13,10 +14,10 @@ from llama_index.selectors.pydantic_selectors import (
 )
 from llama_index.retrievers import RouterRetriever
 from llama_index.chat_engine.condense_plus_context import CondensePlusContextChatEngine
-
-
 from tenancy_docs.index_docs.utils import get_embed_model
 from llama_index.llms import MessageRole
+
+from tenancy_docs.query_docs.node_post_processor import TopNodePostprocessor
 
 
 def create_chat_engine():
@@ -33,7 +34,11 @@ def create_chat_engine():
         },
         {
             "name": "tribunal_cases",
-            "description": "useful for when you want to answer queries that require information about past tribunal cases that are similar to the situation the user is in.",
+            "description": "useful for creating emails or when asked about similar cases directly.",
+        },
+        {
+            "name": "residential_tenancies_act",
+            "description": "the source of truth for New Zealand tenancy laws. The tribunal cases and tenancy services guides and forms are based on it.",
         },
     ]
 
@@ -46,9 +51,7 @@ def create_chat_engine():
         index = VectorStoreIndex.from_vector_store(
             vector_store, service_context=service_context
         )
-        retriever = index.as_retriever(
-            service_context=service_context, similarity_top_k=3
-        )
+        retriever = index.as_retriever(similarity_top_k=3)
         retriever_tool = RetrieverTool.from_defaults(
             retriever=retriever,
             description=source["description"],
@@ -56,20 +59,27 @@ def create_chat_engine():
         retriever_tools.append(retriever_tool)
 
     # llm = OpenAI(model="gpt-4")
-    llm = OpenAI(model="gpt-3.5-turbo-0613")
+    llm = OpenAI(model="gpt-3.5-turbo-1106")  # 16k tokens
     retriever = RouterRetriever(
         selector=PydanticMultiSelector.from_defaults(llm=llm),
         retriever_tools=retriever_tools,
+        service_context=service_context,
     )
+    node_postprocessor = TopNodePostprocessor()
     chat_engine = CondensePlusContextChatEngine.from_defaults(
         retriever=retriever,
         condense_question_prompt=None,
+        node_postprocessors=[node_postprocessor],
         chat_history=None,
         # verbose=True,
         service_context=service_context,
-        system_prompt="Act as tenancy advisor in a community law centre. You are helping a tenant resolve a tenancy issue. Ensure to  reference supporting documents, and be concise including relevant page numbers or sections. If the supporting documents are not relevant, you should ask for more specific information.",
+        system_prompt="Act as tenancy advisor in a community law centre. You are helping a tenant resolve a tenancy issue with short simple answers that reference supporting documents (include relevant page numbers or sections). If the supporting documents are not relevant, you should ask for more specific information.",
     )
     return chat_engine
+
+
+def chat(chat_engine: CondensePlusContextChatEngine):
+    chat_engine.chat_repl()
 
 
 def query_docs(chat_engine: CondensePlusContextChatEngine, message: str):
@@ -91,11 +101,18 @@ def query_docs(chat_engine: CondensePlusContextChatEngine, message: str):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s %(message)s",
+    )
     dotenv.load_dotenv()
     chat_engine = create_chat_engine()
+
+    # chat(chat_engine=chat_engine)
+
     message1 = "I didn't get my bond back what should I do?"
     query_docs(chat_engine=chat_engine, message=message1)
-    # message2 = "What else can I do?"
-    # query_docs(chat_engine=chat_engine, message=message2)
-    # message3 = "Please create a draft email to my landlord requesting my bond back."
-    # query_docs(chat_engine=chat_engine, message=message3)
+    message2 = "What else can I do?"
+    query_docs(chat_engine=chat_engine, message=message2)
+    message3 = "Please create a draft email to my landlord requesting my bond back."
+    query_docs(chat_engine=chat_engine, message=message3)
