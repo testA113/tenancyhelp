@@ -19,6 +19,7 @@ from tenancy_docs.load_docs.utils import (
 collection_sources = [
     "tenancy_services_pdfs",
     "tribunal_cases",
+    "residential_tenancies_act",
 ]
 
 

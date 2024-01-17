@@ -1,3 +1,4 @@
+import logging
 import requests
 from tenancy_docs.load_docs.utils import (
     get_all_document_metadata_from_source,
@@ -12,6 +13,9 @@ def save_docs_locally() -> None:
     """
     # get the pdfs from the database
     docs = get_all_document_metadata_from_source("tenancy_services_pdfs")
+    if docs is None:
+        logging.error("No tenancy_services_pdfs documents found")
+        return
 
     # save the pdfs to the docs directory
     for doc in docs:

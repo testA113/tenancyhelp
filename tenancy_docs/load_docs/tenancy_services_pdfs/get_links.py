@@ -3,8 +3,9 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from tenancy_docs.load_docs.utils import get_fetched_at
 
 from utils import save_cookies
 
@@ -75,7 +76,7 @@ def get_links_from_html() -> None:
     logging.debug(f"Found {len(pdf_rows)} rows")
 
     # get the fetched_at date time from the current time (utc timezone)
-    fetched_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    fetched_at = get_fetched_at()
 
     count_saved = 0
     doc_type = "pdf"

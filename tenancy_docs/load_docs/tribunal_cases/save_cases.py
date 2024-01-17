@@ -15,6 +15,9 @@ def save_cases_locally() -> None:
     """
     # get the cases from the database
     docs = get_all_document_metadata_from_source("tribunal_cases")
+    if docs is None:
+        logging.error("No tribunal_cases documents found")
+        return
 
     # save the cases to the docs directory
     for doc in docs:

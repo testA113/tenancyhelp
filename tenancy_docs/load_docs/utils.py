@@ -1,7 +1,11 @@
+from datetime import datetime
+import hashlib
 import logging
 import os
 import sqlite3
 from typing import Dict, List, Optional, Tuple
+
+import requests
 
 
 def remove_old_docs(url_array: List[str], source: str) -> None:
@@ -112,7 +116,7 @@ def get_all_document_metadata(file_path: str = "../document_metadata.db") -> Lis
     if not os.path.exists(file_path):
         print("error")
         logging.error("No document metadata database found")
-        return
+        return []
 
     conn = sqlite3.connect(file_path)
     conn.row_factory = (
@@ -211,3 +215,42 @@ def update_doc_url(doc_url: str, new_doc_url: str) -> None:
 
     conn.commit()
     conn.close()
+
+
+def hash_file(
+    doc_url: str, cookie_name: Optional[str] = None, cookie_value: Optional[str] = None
+) -> str:
+    """
+    Calculates the SHA1 hash of a file downloaded from the given URL using the provided cookies.
+
+    Args:
+        doc_url (str): The URL of the file to be downloaded and hashed.
+        cookie_name (str, optional): The name of the cookie to be used for authentication.
+        cookie_value (str, optional): The value of the cookie to be used for authentication.
+
+    Returns:
+        str: The SHA1 hash of the downloaded file.
+    """
+    cookies = {cookie_name: cookie_value} if cookie_name and cookie_value else None
+    if cookies:
+        logging.debug(f"Making a request to {doc_url} with cookies {cookies}")
+    else:
+        logging.debug(f"Making a request to {doc_url} without cookies")
+    response = requests.get(
+        doc_url,
+        stream=True,
+        cookies=cookies,
+        headers={"User-Agent": "Chrome/120.0.0.0"},
+    )
+
+    sha1 = hashlib.sha1()
+
+    for chunk in response.iter_content(chunk_size=8192):
+        sha1.update(chunk)
+
+    logging.debug(f"Hash of {doc_url} is {sha1.hexdigest()}")
+    return sha1.hexdigest()
+
+
+def get_fetched_at() -> str:
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
