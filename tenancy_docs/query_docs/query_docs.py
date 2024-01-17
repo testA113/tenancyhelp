@@ -6,7 +6,7 @@ from llama_index import (
 )
 from llama_index.vector_stores import ChromaVectorStore
 from llama_index.llms import OpenAI, ChatMessage, MessageRole
-from llama_index.tools import ToolMetadata, RetrieverTool
+from llama_index.tools import RetrieverTool
 import chromadb
 from llama_index.selectors.pydantic_selectors import (
     PydanticMultiSelector,
@@ -73,16 +73,20 @@ def create_chat_engine():
 
 
 def query_docs(chat_engine: CondensePlusContextChatEngine, message: str):
-    response = chat_engine.chat(message=message)
-    print(response)
-    # get all source node metadata
-    for source_node in response.source_nodes:
-        print(source_node.metadata)
+    streaming_response = chat_engine.stream_chat(message=message)
+    # print out the source nodes
+    for node_with_score in streaming_response.source_nodes:
+        print(node_with_score.node.metadata)
     print("\n\n")
-    print(response.source_nodes)
+
+    # print out the response
+    for token in streaming_response.response_gen:
+        print(token, end="")
     print("\n\n-----\n\n")
+
     # create a chat message to add to the char history
-    chat_message = ChatMessage(role=MessageRole.USER, content=response)
+    message_content = "".join(token for token in streaming_response.response_gen)
+    chat_message = ChatMessage(role=MessageRole.USER, content=message_content)
     chat_engine.chat_history.append(chat_message)
 
 
@@ -91,7 +95,7 @@ if __name__ == "__main__":
     chat_engine = create_chat_engine()
     message1 = "I didn't get my bond back what should I do?"
     query_docs(chat_engine=chat_engine, message=message1)
-    message2 = "What else can I do?"
-    query_docs(chat_engine=chat_engine, message=message2)
-    message3 = "Please create a draft email to my landlord requesting my bond back."
-    query_docs(chat_engine=chat_engine, message=message3)
+    # message2 = "What else can I do?"
+    # query_docs(chat_engine=chat_engine, message=message2)
+    # message3 = "Please create a draft email to my landlord requesting my bond back."
+    # query_docs(chat_engine=chat_engine, message=message3)
