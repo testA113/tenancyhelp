@@ -7,6 +7,7 @@ from tenancy_docs.load_docs.utils import (
     add_document_metadata,
     delete_document_metadata,
     get_document_metadata_from_url,
+    get_fetched_at,
     remove_old_docs,
 )
 
@@ -29,7 +30,7 @@ def save_cases_metadata(cases: List[Dict[str, str]]) -> None:
     """
     Sets the metadata for the documents in the database.
     """
-    fetched_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    fetched_at = get_fetched_at()
     doc_type = "pdf"
     source = "tribunal_cases"
     for case in cases:

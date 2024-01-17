@@ -1,8 +1,5 @@
-import hashlib
 import json
 import logging
-import os
-import sqlite3
 from typing import Tuple
 
 import requests
@@ -11,6 +8,7 @@ from tenancy_docs.load_docs.utils import (
     add_document_metadata,
     delete_document_metadata,
     get_document_metadata_from_url,
+    hash_file,
 )
 
 db_file = "../document_metadata.db"
@@ -55,32 +53,6 @@ def add_unique_document_metadata(
     delete_document_metadata(None, doc_url, None)
     add_document_metadata(title, doc_type, doc_url, source, fetched_at, new_hash)
     return
-
-
-def hash_file(doc_url: str, cookie_name: str, cookie_value: str) -> str:
-    """
-    Calculates the SHA1 hash of a file downloaded from the given URL using the provided cookies.
-
-    Args:
-        doc_url (str): The URL of the file to be downloaded and hashed.
-        cookie_name (str): The name of the cookie to be used for authentication.
-        cookie_value (str): The value of the cookie to be used for authentication.
-
-    Returns:
-        str: The SHA1 hash of the downloaded file.
-    """
-    logging.debug(
-        f"Making a request to {doc_url} with cookies {cookie_name}={cookie_value}"
-    )
-    response = requests.get(doc_url, stream=True, cookies={cookie_name: cookie_value})
-
-    sha1 = hashlib.sha1()
-
-    for chunk in response.iter_content(chunk_size=8192):
-        sha1.update(chunk)
-
-    logging.debug(f"Hash of {doc_url} is {sha1.hexdigest()}")
-    return sha1.hexdigest()
 
 
 def save_cookies(cookie_name: str, cookie_value: str) -> None:
