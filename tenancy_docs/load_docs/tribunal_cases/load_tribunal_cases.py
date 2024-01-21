@@ -47,25 +47,25 @@ def get_unique_cases(docs: List[Dict[str, str]]) -> List[Dict[str, str]]:
 def get_queries() -> List[Dict[str, str]]:
     return [
         {
-            "rows": "10",
+            "rows": "100000",
             "sort": "decisionDateIndex_l desc",
             "q": 'costAwarded_s:"Applicant"',
             "wt": "json",
         },
         {
-            "rows": "10",
+            "rows": "100000",
             "sort": "decisionDateIndex_l desc",
             "q": 'costAwarded_s:"Respondent"',
             "wt": "json",
         },
         {
-            "rows": "10",
+            "rows": "100000",
             "sort": "decisionDateIndex_l desc",
             "q": 'costAwarded_s:"Landlord"',
             "wt": "json",
         },
         {
-            "rows": "10",
+            "rows": "100000",
             "sort": "decisionDateIndex_l desc",
             "q": 'costAwarded_s:"Tenant"',
             "wt": "json",

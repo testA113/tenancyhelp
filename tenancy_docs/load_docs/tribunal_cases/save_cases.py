@@ -66,10 +66,14 @@ def save_file(doc: Dict) -> None:
         return
 
     # save the file in the pdfs directory
-    # file_name = doc_url.split("/")[-1]
     if new_doc_url:
         file_name = new_doc_url.split("/")[-1]
     else:
         file_name = doc_url.split("/")[-1]
     with open(f"../docs/{file_name}", "wb") as f:
         f.write(response.content)
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+    save_cases_locally()

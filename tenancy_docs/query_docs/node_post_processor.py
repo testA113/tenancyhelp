@@ -13,7 +13,7 @@ class TopNodePostprocessor(BaseNodePostprocessor):
             key=lambda x: x.score if x.score is not None else float("-inf"),
             reverse=True,
         )
-        # select top 3 nodes
-        nodes = nodes[:3]
+        # select top 4 nodes
+        nodes = nodes[:4]
 
         return nodes
