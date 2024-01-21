@@ -30,7 +30,7 @@ def create_chat_engine():
     sources = [
         {
             "name": "tenancy_services_pdfs",
-            "description": "useful for when you want to answer queries that require guides and advice based on New Zealand tenancy laws.",
+            "description": "useful for when you want to answer queries that require guides and forms based on New Zealand tenancy laws.",
         },
         {
             "name": "tribunal_cases",
@@ -51,7 +51,7 @@ def create_chat_engine():
         index = VectorStoreIndex.from_vector_store(
             vector_store, service_context=service_context
         )
-        retriever = index.as_retriever(similarity_top_k=3)
+        retriever = index.as_retriever(similarity_top_k=2)
         retriever_tool = RetrieverTool.from_defaults(
             retriever=retriever,
             description=source["description"],
@@ -73,7 +73,7 @@ def create_chat_engine():
         chat_history=None,
         # verbose=True,
         service_context=service_context,
-        system_prompt="Act as tenancy advisor in a community law centre. You are helping a tenant resolve a tenancy issue with short simple answers that reference supporting documents (include relevant page numbers or sections). If the supporting documents are not relevant, you should ask for more specific information.",
+        system_prompt="Act as joyful tenancy advisor in a community law centre helping landlords resolve disputes with their tenants. Your answers must be concise and always reference supporting documents and forms (include the relevant title and page numbers).",
     )
     return chat_engine
 
@@ -110,9 +110,5 @@ if __name__ == "__main__":
 
     # chat(chat_engine=chat_engine)
 
-    message1 = "I didn't get my bond back what should I do?"
+    message1 = "My tenant is not paying rent for 3 weeks. What should I do?"
     query_docs(chat_engine=chat_engine, message=message1)
-    message2 = "What else can I do?"
-    query_docs(chat_engine=chat_engine, message=message2)
-    message3 = "Please create a draft email to my landlord requesting my bond back."
-    query_docs(chat_engine=chat_engine, message=message3)
