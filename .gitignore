@@ -16,3 +16,10 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# files too large for github
+data_level0.bin
+chroma.sqllite3
+
+# docs
+tenancy_docs/load_docs/docs
