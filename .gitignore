@@ -19,7 +19,7 @@ __pycache__/
 
 # files too large for github
 data_level0.bin
-chroma.sqllite3
+chroma.sqlite3
 
 # docs
 tenancy_docs/load_docs/docs
