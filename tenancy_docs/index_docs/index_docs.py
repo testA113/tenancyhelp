@@ -1,6 +1,8 @@
 import logging
 import os
 import dotenv
+from typing import Dict, List
+
 from llama_index import (
     Document,
     OpenAIEmbedding,
@@ -9,8 +11,14 @@ from llama_index import (
     ServiceContext,
 )
 from llama_index.vector_stores import ChromaVectorStore
-import chromadb
-from typing import Dict, List
+from chromadb import PersistentClient
+from chromadb.api import ClientAPI
+from chromadb.api.models.Collection import Collection
+from chromadb.api.types import (
+    IDs,
+)
+
+from tenancy_docs.index_docs.get_transformations import get_transformations
 from tenancy_docs.index_docs.utils import get_embed_model
 from tenancy_docs.load_docs.utils import (
     get_all_document_metadata_from_source,
@@ -26,9 +34,15 @@ collection_sources = [
 def index_all_docs():
     OpenAIEmbedding.api_key = os.environ["OPENAI_API_KEY"]
     embed_model = get_embed_model()
-    service_context = ServiceContext.from_defaults(embed_model=embed_model)
-    chroma_client = chromadb.PersistentClient(path="./chroma_db")
+    chroma_client = PersistentClient(path="./chroma_db")
     for source in collection_sources:
+        # Only do summary transformations for the tenancy_services_pdfs source
+        if source == "tenancy_services_pdfs":
+            service_context = ServiceContext.from_defaults(
+                embed_model=embed_model, transformations=get_transformations()
+            )
+        else:
+            service_context = ServiceContext.from_defaults(embed_model=embed_model)
         index_source_docs(
             source=source,
             collection_name=source,
@@ -41,7 +55,7 @@ def index_source_docs(
     source: str,
     collection_name: str,
     service_context: ServiceContext,
-    chroma_client: chromadb.PersistentClient,
+    chroma_client: ClientAPI,
 ):
     # set up ChromaVectorStore and load in data
     collection = chroma_client.get_or_create_collection(collection_name)
@@ -73,6 +87,9 @@ def index_source_docs(
                 where={"doc_sha256_hash": doc["doc_sha256_hash"]},
             )
             if len(indexed_doc_found["ids"]) > 0:
+                logging.debug(
+                    f"Skipping document {doc['doc_url']} that is already in the index"
+                )
                 skipped_docs += 1
                 continue
 
@@ -90,13 +107,14 @@ def index_source_docs(
                     "doc_sha256_hash": doc["doc_sha256_hash"],
                 },
             ).load_data()
+
             documents += document
         except Exception as e:
             logging.error(f"Error loading document {doc['doc_url']}: {e}")
 
     if len(documents) > 0:
         logging.info(f"Adding {len(documents)} documents in the index")
-        index.refresh_ref_docs(documents, service_context=service_context)
+        index.refresh_ref_docs(documents)
 
     logging.info(f"Skipped {skipped_docs} documents that were already in the index")
 
@@ -104,14 +122,14 @@ def index_source_docs(
 # If there are docs in the collection that aren't in the database, delete them from the collection
 def delete_old_docs(
     source_docs: List[Dict],
-    collection: chromadb.Collection,
+    collection: Collection,
 ):
     doc_hashes = [doc["doc_sha256_hash"] for doc in source_docs]
     indexed_docs = collection.get(
         where={"doc_sha256_hash": {"$ne": ""}},
     )
     indexed_doc_hashes = [doc["doc_sha256_hash"] for doc in indexed_docs["metadatas"]]
-    doc_indexes_to_delete: chromadb.IDs = []
+    doc_indexes_to_delete: IDs = []
     for i, indexed_doc_hash in enumerate(indexed_doc_hashes):
         if indexed_doc_hash not in doc_hashes:
             doc_indexes_to_delete.append(i)
@@ -124,6 +142,6 @@ def delete_old_docs(
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     dotenv.load_dotenv()
     index_all_docs()
