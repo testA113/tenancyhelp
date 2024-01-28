@@ -14,9 +14,6 @@ from llama_index.vector_stores import ChromaVectorStore
 from chromadb import PersistentClient
 from chromadb.api import ClientAPI
 from chromadb.api.models.Collection import Collection
-from chromadb.api.types import (
-    IDs,
-)
 
 from tenancy_docs.index_docs.get_transformations import get_transformations
 from tenancy_docs.index_docs.utils import get_embed_model
@@ -128,8 +125,11 @@ def delete_old_docs(
     indexed_docs = collection.get(
         where={"doc_sha256_hash": {"$ne": ""}},
     )
+    if indexed_docs["metadatas"] is None:
+        logging.info("No documents to delete from the index")
+        return
     indexed_doc_hashes = [doc["doc_sha256_hash"] for doc in indexed_docs["metadatas"]]
-    doc_indexes_to_delete: IDs = []
+    doc_indexes_to_delete: List[int] = []
     for i, indexed_doc_hash in enumerate(indexed_doc_hashes):
         if indexed_doc_hash not in doc_hashes:
             doc_indexes_to_delete.append(i)

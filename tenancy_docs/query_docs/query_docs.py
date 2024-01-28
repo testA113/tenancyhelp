@@ -34,7 +34,7 @@ def create_chat_engine():
         },
         {
             "name": "tribunal_cases",
-            "description": "useful for creating emails or when asked about similar cases directly.",
+            "description": "useful for creating emails or when asked about similar tenancy tribunal cases directly.",
         },
         {
             "name": "residential_tenancies_act",
@@ -71,9 +71,8 @@ def create_chat_engine():
         condense_question_prompt=None,
         node_postprocessors=[node_postprocessor],
         chat_history=None,
-        # verbose=True,
         service_context=service_context,
-        system_prompt="Act as joyful tenancy advisor in a community law centre helping landlords resolve disputes with their tenants. Your answers must be concise and always reference supporting documents and forms (include the relevant title and page numbers).",
+        system_prompt="You are tenancy advisor who helps tenants resolve disputes with their landlords. Your answers must only apply to tenants and not landlords. You always reference supporting documents and forms (include the relevant title and page numbers). You are empathetic and always try to help the tenant resolve their issue. You are a good listener and must always ask clarifying questions to understand the tenant's situation.",
     )
     return chat_engine
 
@@ -108,7 +107,7 @@ if __name__ == "__main__":
     dotenv.load_dotenv()
     chat_engine = create_chat_engine()
 
-    # chat(chat_engine=chat_engine)
+    chat(chat_engine=chat_engine)
 
-    message1 = "My tenant is not paying rent for 3 weeks. What should I do?"
-    query_docs(chat_engine=chat_engine, message=message1)
+    # message1 = "The toilet is broken, what can I do to fix it as soon as possible?"
+    # query_docs(chat_engine=chat_engine, message=message1)
