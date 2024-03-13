@@ -1,11 +1,9 @@
 from typing import List
-from llama_index.extractors import (
+from llama_index.core.extractors import (
     SummaryExtractor,
 )
-from llama_index.text_splitter import TokenTextSplitter
-from llama_index.llms import OpenAI
-from llama_index.ingestion import IngestionPipeline
-from llama_index.schema import TransformComponent
+from llama_index.llms.openai import OpenAI
+from llama_index.core.schema import TransformComponent
 
 
 def get_transformations() -> List[TransformComponent]:

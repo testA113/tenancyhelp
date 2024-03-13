@@ -1,30 +1,31 @@
 import logging
 import dotenv
-from llama_index import (
-    VectorStoreIndex,
-    ServiceContext,
-)
-from llama_index.memory import ChatMemoryBuffer
-from llama_index.vector_stores import ChromaVectorStore
-from llama_index.llms import OpenAI, ChatMessage, MessageRole
-from llama_index.tools import RetrieverTool
+
+from llama_index.core import Settings, VectorStoreIndex
+from llama_index.vector_stores.chroma import ChromaVectorStore
+from llama_index.core.llms import ChatMessage, MessageRole
+from llama_index.llms.anthropic import Anthropic
+from llama_index.llms.openai import OpenAI
+from llama_index.core.tools import RetrieverTool
 import chromadb
-from llama_index.selectors.pydantic_selectors import (
+from llama_index.core.selectors import (
     PydanticMultiSelector,
 )
-from llama_index.retrievers import RouterRetriever
-from llama_index.chat_engine.condense_plus_context import CondensePlusContextChatEngine
+from llama_index.core.retrievers import RouterRetriever
+from llama_index.core.chat_engine.condense_plus_context import (
+    CondensePlusContextChatEngine,
+)
 from tenancy_docs.index_docs.utils import get_embed_model
-from llama_index.llms import MessageRole
+from llama_index.core.llms import MessageRole
 
 from tenancy_docs.query_docs.node_post_processor import TopNodePostprocessor
 
 
 def create_chat_engine():
-    embed_model = get_embed_model()
+    # llm = OpenAI(model="gpt-4")
+    # llm = OpenAI(model="gpt-3.5-turbo-1106")  # 16k tokens
 
     # load indexes for each source
-    service_context = ServiceContext.from_defaults(embed_model=embed_model)
     chroma_client = chromadb.PersistentClient(path="../index_docs/chroma_db")
 
     sources = [
@@ -48,9 +49,7 @@ def create_chat_engine():
         logging.info(f"Found {collection.count()} {source['name'].replace('_', ' ')}")
 
         vector_store = ChromaVectorStore(chroma_collection=collection)
-        index = VectorStoreIndex.from_vector_store(
-            vector_store, service_context=service_context
-        )
+        index = VectorStoreIndex.from_vector_store(vector_store)
         retriever = index.as_retriever(similarity_top_k=2)
         retriever_tool = RetrieverTool.from_defaults(
             retriever=retriever,
@@ -58,12 +57,11 @@ def create_chat_engine():
         )
         retriever_tools.append(retriever_tool)
 
-    # llm = OpenAI(model="gpt-4")
-    llm = OpenAI(model="gpt-3.5-turbo-1106")  # 16k tokens
     retriever = RouterRetriever(
-        selector=PydanticMultiSelector.from_defaults(llm=llm),
+        selector=PydanticMultiSelector.from_defaults(
+            llm=OpenAI(model="gpt-3.5-turbo-1106")
+        ),
         retriever_tools=retriever_tools,
-        service_context=service_context,
     )
     node_postprocessor = TopNodePostprocessor()
     chat_engine = CondensePlusContextChatEngine.from_defaults(
@@ -71,7 +69,6 @@ def create_chat_engine():
         condense_question_prompt=None,
         node_postprocessors=[node_postprocessor],
         chat_history=None,
-        service_context=service_context,
         system_prompt="You are tenancy advisor who helps tenants resolve disputes with their landlords. Your answers must only apply to tenants and not landlords. You always reference supporting documents and forms (include the relevant title and page numbers). You are empathetic and always try to help the tenant resolve their issue. You are a good listener and must always ask clarifying questions to understand the tenant's situation.",
     )
     return chat_engine
@@ -105,6 +102,10 @@ if __name__ == "__main__":
         format="%(asctime)s %(levelname)s %(name)s %(message)s",
     )
     dotenv.load_dotenv()
+    # tokenizer = Anthropic().tokenizer
+    # Settings.tokenizer = tokenizer
+    Settings.embed_model = get_embed_model()
+    Settings.llm = Anthropic(temperature=0.0, model="claude-3-opus-20240229")
     chat_engine = create_chat_engine()
 
     chat(chat_engine=chat_engine)
