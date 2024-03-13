@@ -1,16 +1,14 @@
 import logging
-import os
 import dotenv
 from typing import Dict, List
 
-from llama_index import (
+from llama_index.core import (
     Document,
-    OpenAIEmbedding,
     VectorStoreIndex,
     SimpleDirectoryReader,
-    ServiceContext,
+    Settings,
 )
-from llama_index.vector_stores import ChromaVectorStore
+from llama_index.vector_stores.chroma import ChromaVectorStore
 from chromadb import PersistentClient
 from chromadb.api import ClientAPI
 from chromadb.api.models.Collection import Collection
@@ -29,21 +27,15 @@ collection_sources = [
 
 
 def index_all_docs():
-    OpenAIEmbedding.api_key = os.environ["OPENAI_API_KEY"]
-    embed_model = get_embed_model()
+    Settings.embed_model = get_embed_model()
     chroma_client = PersistentClient(path="./chroma_db")
     for source in collection_sources:
         # Only do summary transformations for the tenancy_services_pdfs source
         if source == "tenancy_services_pdfs":
-            service_context = ServiceContext.from_defaults(
-                embed_model=embed_model, transformations=get_transformations()
-            )
-        else:
-            service_context = ServiceContext.from_defaults(embed_model=embed_model)
+            Settings.transformations = get_transformations()
         index_source_docs(
             source=source,
             collection_name=source,
-            service_context=service_context,
             chroma_client=chroma_client,
         )
 
@@ -51,7 +43,6 @@ def index_all_docs():
 def index_source_docs(
     source: str,
     collection_name: str,
-    service_context: ServiceContext,
     chroma_client: ClientAPI,
 ):
     # set up ChromaVectorStore and load in data
@@ -59,7 +50,6 @@ def index_source_docs(
     vector_store = ChromaVectorStore(chroma_collection=collection)
     index = VectorStoreIndex.from_vector_store(
         vector_store,
-        service_context=service_context,
     )
 
     # delete old docs that are no longer in the database
