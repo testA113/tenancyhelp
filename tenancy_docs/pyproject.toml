@@ -19,6 +19,7 @@ pypdf = "^4.1.0"
 llama-index-vector-stores-chroma = "^0.1.6"
 llama-index-llms-huggingface = "^0.1.4"
 llama-index-embeddings-huggingface = "^0.1.4"
+flask = "^3.0.2"
 
 [tool.poetry.group.dev.dependencies]
 python = "^3.11"

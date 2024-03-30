@@ -16,14 +16,15 @@ from llama_index.core.chat_engine.condense_plus_context import (
     CondensePlusContextChatEngine,
 )
 from tenancy_docs.index_docs.utils import get_embed_model
-from llama_index.core.llms import MessageRole
+import json
+from typing import Generator
 
 from tenancy_docs.query_docs.node_post_processor import TopNodePostprocessor
 
 
 def create_chat_engine():
-    # llm = OpenAI(model="gpt-4")
-    # llm = OpenAI(model="gpt-3.5-turbo-1106")  # 16k tokens
+    Settings.embed_model = get_embed_model()
+    Settings.llm = OpenAI(model="gpt-4")
 
     # load indexes for each source
     chroma_client = chromadb.PersistentClient(path="../index_docs/chroma_db")
@@ -35,7 +36,7 @@ def create_chat_engine():
         },
         {
             "name": "tribunal_cases",
-            "description": "useful for creating emails or when asked about similar tenancy tribunal cases directly.",
+            "description": "useful for creating emails or when asked about similar tenancy tribunal cases directly. Don't use this for general tenancy queries.",
         },
         {
             "name": "residential_tenancies_act",
@@ -43,10 +44,10 @@ def create_chat_engine():
         },
     ]
 
-    retriever_tools = []
+    retriever_tools: list[RetrieverTool] = []
     for source in sources:
         collection = chroma_client.get_or_create_collection(source["name"])
-        logging.info(f"Found {collection.count()} {source['name'].replace('_', ' ')}")
+        logging.debug(f"Found {collection.count()} {source['name'].replace('_', ' ')}")
 
         vector_store = ChromaVectorStore(chroma_collection=collection)
         index = VectorStoreIndex.from_vector_store(vector_store)
@@ -63,6 +64,8 @@ def create_chat_engine():
         ),
         retriever_tools=retriever_tools,
     )
+    logging.debug("Retriever tool created", extra={"retriever_tools": retriever_tools})
+
     node_postprocessor = TopNodePostprocessor()
     chat_engine = CondensePlusContextChatEngine.from_defaults(
         retriever=retriever,
@@ -78,37 +81,55 @@ def chat(chat_engine: CondensePlusContextChatEngine):
     chat_engine.chat_repl()
 
 
-def query_docs(chat_engine: CondensePlusContextChatEngine, message: str):
-    streaming_response = chat_engine.stream_chat(message=message)
-    # print out the source nodes
-    for node_with_score in streaming_response.source_nodes:
-        print(node_with_score.node.metadata)
-    print("\n\n")
-
-    # print out the response
-    for token in streaming_response.response_gen:
-        print(token, end="")
-    print("\n\n-----\n\n")
-
-    # create a chat message to add to the char history
-    message_content = "".join(token for token in streaming_response.response_gen)
-    chat_message = ChatMessage(role=MessageRole.USER, content=message_content)
-    chat_engine.chat_history.append(chat_message)
+def format_sse(data: str, event=None) -> str:
+    """Formats data for Server-Sent Events (SSE)."""
+    msg = f"data: {data}\n\n"
+    if event is not None:
+        msg = f"event: {event}\n{msg}"
+    return msg
 
 
+def query_docs(
+    chat_engine: CondensePlusContextChatEngine, message: str
+) -> Generator[str, None, None]:
+    try:
+        streaming_response = chat_engine.stream_chat(message=message)
+
+        # Yield relevant documents information as soon as it's available
+        documents = []
+        for node_with_score in streaming_response.source_nodes:
+            metadata = node_with_score.node.metadata
+            print(node_with_score.node.metadata)
+            document_info = {
+                "title": metadata.get("title", ""),
+                "doc_url": metadata.get("doc_url", ""),
+                "page_label": metadata.get("page_label", ""),
+            }
+            documents.append(document_info)
+            yield format_sse(json.dumps({"documents": documents}), event="document")
+
+        # Yield the response text as soon as it's available
+        full_response = ""
+        for token in streaming_response.response_gen:
+            full_response += token
+            yield format_sse(json.dumps({"response": full_response}), event="response")
+
+
+    except Exception as e:
+        # log full stack trace
+        logging.exception(e)
+        yield format_sse(json.dumps({"error": str(e)}), event="error")
+
+# used for testing purposes
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s %(levelname)s %(name)s %(message)s",
     )
     dotenv.load_dotenv()
-    # tokenizer = Anthropic().tokenizer
-    # Settings.tokenizer = tokenizer
-    Settings.embed_model = get_embed_model()
-    Settings.llm = Anthropic(temperature=0.0, model="claude-3-opus-20240229")
     chat_engine = create_chat_engine()
 
-    chat(chat_engine=chat_engine)
-
-    # message1 = "The toilet is broken, what can I do to fix it as soon as possible?"
-    # query_docs(chat_engine=chat_engine, message=message1)
+    message1 = "The toilet is broken, what can I do to fix it as soon as possible?"
+    response1 = query_docs(chat_engine, message1)
+    for response in response1:
+        logging.info(response)

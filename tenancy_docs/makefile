@@ -1,4 +1,4 @@
-.PHONY: load_docs index_docs query_docs load_tenancy_pdfs load_tribunal_cases
+.PHONY: load_docs index_docs query_docs load_tenancy_pdfs load_tribunal_cases run_api
 
 # Loading docs
 load_docs: 
@@ -25,3 +25,7 @@ index_docs: index_docs/index_docs.py
 # Querying docs
 query_docs: query_docs/query_docs.py
 	cd query_docs/ && poetry run python query_docs.py
+
+# Running the api server
+run_api: api/app.py
+	cd api/ && poetry run python app.py
