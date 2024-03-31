@@ -17,7 +17,7 @@ from llama_index.core.chat_engine.condense_plus_context import (
 )
 from tenancy_docs.index_docs.utils import get_embed_model
 import json
-from typing import Generator
+from typing import Generator, List, Optional
 
 from tenancy_docs.query_docs.node_post_processor import TopNodePostprocessor
 
@@ -90,10 +90,12 @@ def format_sse(data: str, event=None) -> str:
 
 
 def query_docs(
-    chat_engine: CondensePlusContextChatEngine, message: str
+    chat_engine: CondensePlusContextChatEngine, message: str, chat_history: Optional[List[ChatMessage]]
 ) -> Generator[str, None, None]:
     try:
-        streaming_response = chat_engine.stream_chat(message=message)
+        logging.debug("Streaming response from chat engine")
+        logging.debug(f"Message: {message}")
+        streaming_response = chat_engine.stream_chat(message=message, chat_history=chat_history)
 
         # Yield relevant documents information as soon as it's available
         documents = []
@@ -109,10 +111,8 @@ def query_docs(
             yield format_sse(json.dumps({"documents": documents}), event="document")
 
         # Yield the response text as soon as it's available
-        full_response = ""
         for token in streaming_response.response_gen:
-            full_response += token
-            yield format_sse(json.dumps({"response": full_response}), event="response")
+            yield format_sse(json.dumps({"content": token}), event="message")
 
 
     except Exception as e:
@@ -129,7 +129,12 @@ if __name__ == "__main__":
     dotenv.load_dotenv()
     chat_engine = create_chat_engine()
 
-    message1 = "The toilet is broken, what can I do to fix it as soon as possible?"
-    response1 = query_docs(chat_engine, message1)
+    message1 = "Create an email"
+    response1 = query_docs(chat_engine, message1, [
+        {
+            "role": "user",
+            "content": "The toilet is broken, what can I do to fix it as soon as possible?"
+        }
+    ])
     for response in response1:
         logging.info(response)
