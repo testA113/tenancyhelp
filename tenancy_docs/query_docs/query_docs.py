@@ -11,6 +11,9 @@ import chromadb
 from llama_index.core.selectors import (
     PydanticMultiSelector,
 )
+from llama_index.core.chat_engine.types import (
+    StreamingAgentChatResponse,
+)
 from llama_index.core.retrievers import RouterRetriever
 from llama_index.core.chat_engine.condense_plus_context import (
     CondensePlusContextChatEngine,
@@ -118,7 +121,7 @@ def query_docs(
         yield format_sse(format_token_to_openai_chat_completion_obj({"role": "assistant", "content": ""}))
         
         # Iterate through the streaming response and yield the response text
-        streaming_response = chat_engine.stream_chat(message=message, chat_history=chat_history)
+        streaming_response: StreamingAgentChatResponse = chat_engine.stream_chat(message=message, chat_history=chat_history)
 
         # Yield relevant documents information as soon as it's available
         documents = []
@@ -127,18 +130,17 @@ def query_docs(
             document_info = {
                 "title": metadata.get("title", ""),
                 "doc_url": metadata.get("doc_url", ""),
-                "page_label": metadata.get("page_label", ""),
+                "page_label": metadata.get("page_label", "")
             }
             documents.append(document_info)
         logging.debug(f"Found documents: {documents}")
-        yield format_sse(format_token_to_openai_chat_completion_obj({"documents": documents}))
+        yield format_sse(format_token_to_openai_chat_completion_obj({"content": f"{json.dumps(documents)}||||"})) # add a unique delimiter to separate the documents from the response
 
         # Yield the response text as soon as it's available
         full_response = ""
         for token in streaming_response.response_gen:
             full_response += token
             yield format_sse(format_token_to_openai_chat_completion_obj({"content": token}))
-
         logging.debug(f"Full response: {full_response}")
 
         # Stop events
