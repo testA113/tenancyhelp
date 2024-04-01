@@ -4,34 +4,62 @@ from flask import Flask, request, Response
 import logging
 from llama_index.core.llms import ChatMessage
 
-app = Flask(__name__)
-
-# Import your existing functions here
 from tenancy_docs.query_docs.query_docs import create_chat_engine, query_docs
 
+# Load environment variables
+dotenv.load_dotenv()
 
-@app.route("/chat", methods=["POST"])
+# Set up logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+)
+
+# Create chat engine
+chat_engine = create_chat_engine()
+
+# Initialize Flask application
+app = Flask(__name__)
+
+@app.route("/chat/completions", methods=["POST"])
 def chat():
+    """
+    Endpoint to handle chat requests. It receives a POST request with a JSON body.
+    The JSON should contain a "messages" field which is a list of messages.
+    Each message should be a dictionary with a "role" and "content" field.
+    The "role" can be "user" or "assistant", and "content" is the message text.
+    The function returns a stream of responses from the chat engine.
+    """
+    # Get JSON data from request
     data = request.get_json()
-    chat_history_json = data.get("messages", [])
+    if not data:
+        logging.error("No data received in request")
+        return {"error": "No data received in request"}, 400
 
-    # The chat history contains all messages except from the last one
+    # Get chat history from data
+    chat_history_json = data.get("messages", [])
+    if not chat_history_json:
+        logging.error("No messages received in request")
+        return {"error": "No messages received in request"}, 400
+
+    # Convert chat history to list of ChatMessage objects
     chat_history: List[ChatMessage] = []
     for chat_item in chat_history_json[:-1]:
-        chat_history.append(ChatMessage(role=chat_item["role"], content=chat_item["content"]))
+        role = chat_item.get("role")
+        if role not in ["user", "assistant"]:
+            logging.error(f"Invalid role: {role}")
+            return {"error": f"Invalid role: {role}. Role can only be 'user' or 'assistant'."}, 400
+        chat_history.append(ChatMessage(role=role, content=chat_item["content"]))
 
-    # The message is the most recent user message
-    message = chat_history_json[-1]["content"]
+    # Get the latest message from the chat history
+    message = chat_history_json[-1].get("content")
+    if not message:
+        logging.error("No message received in request")
+        return {"error": "No message received in request"}, 400
 
-    # Use the generator function to stream the response and documents
+    # Query chat engine and return response stream
     response_stream = query_docs(chat_engine=chat_engine, message=message, chat_history=chat_history)
     return Response(response_stream, mimetype="text/event-stream")
 
 if __name__ == "__main__":
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format="%(asctime)s %(levelname)s %(name)s %(message)s",
-    )
-    dotenv.load_dotenv()
-    chat_engine = create_chat_engine()
     app.run(debug=True)
