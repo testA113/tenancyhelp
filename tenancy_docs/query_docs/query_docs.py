@@ -77,10 +77,6 @@ def create_chat_engine():
     return chat_engine
 
 
-def chat(chat_engine: CondensePlusContextChatEngine):
-    chat_engine.chat_repl()
-
-
 def format_sse(data: str, event=None) -> str:
     """Formats data for Server-Sent Events (SSE)."""
     msg = f"data: {data}\n\n"
@@ -92,6 +88,20 @@ def format_sse(data: str, event=None) -> str:
 def query_docs(
     chat_engine: CondensePlusContextChatEngine, message: str, chat_history: Optional[List[ChatMessage]]
 ) -> Generator[str, None, None]:
+    """
+    Queries the chat engine for relevant documents and yields the document information and response text.
+
+    Args:
+        chat_engine (CondensePlusContextChatEngine): The chat engine instance.
+        message (str): The message to send to the chat engine.
+        chat_history (Optional[List[ChatMessage]]): The chat history.
+
+    Yields:
+        str: The document information or response text in Server-Sent Events (SSE) format.
+
+    Raises:
+        Exception: If an error occurs during the query process.
+    """
     try:
         logging.debug("Streaming response from chat engine")
         logging.debug(f"Message: {message}")
