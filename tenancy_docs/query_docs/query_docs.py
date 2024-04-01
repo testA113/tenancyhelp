@@ -84,6 +84,15 @@ def format_sse(data: str, event=None) -> str:
         msg = f"event: {event}\n{msg}"
     return msg
 
+# gets {"content": token} or {"role": "assistant"} and transforms into 
+# `{"choices":[{"delta":{"content": token}}]}` or `{"choices":[{"delta":{"role": "assistant"}}]}` format
+# https://platform.openai.com/docs/api-reference/chat/streaming
+def format_token_to_openai_chat_completion_obj(delta: dict) -> str:
+    if "content" in delta or "role" in delta or "documents" in delta:
+        return json.dumps({"choices": [{"delta": delta, "index":0, "finish_reason":None}]})
+    else:
+        return json.dumps({"error": "Invalid delta format"})
+
 
 def query_docs(
     chat_engine: CondensePlusContextChatEngine, message: str, chat_history: Optional[List[ChatMessage]]
@@ -104,25 +113,37 @@ def query_docs(
     """
     try:
         logging.debug("Streaming response from chat engine")
-        logging.debug(f"Message: {message}")
+        logging.debug(f"Message from user: {message}")
+        # initially, set the role with no content
+        yield format_sse(format_token_to_openai_chat_completion_obj({"role": "assistant", "content": ""}))
+        
+        # Iterate through the streaming response and yield the response text
         streaming_response = chat_engine.stream_chat(message=message, chat_history=chat_history)
 
         # Yield relevant documents information as soon as it's available
         documents = []
         for node_with_score in streaming_response.source_nodes:
             metadata = node_with_score.node.metadata
-            print(node_with_score.node.metadata)
             document_info = {
                 "title": metadata.get("title", ""),
                 "doc_url": metadata.get("doc_url", ""),
                 "page_label": metadata.get("page_label", ""),
             }
             documents.append(document_info)
-            yield format_sse(json.dumps({"documents": documents}), event="document")
+        logging.debug(f"Found documents: {documents}")
+        yield format_sse(format_token_to_openai_chat_completion_obj({"documents": documents}))
 
         # Yield the response text as soon as it's available
+        full_response = ""
         for token in streaming_response.response_gen:
-            yield format_sse(json.dumps({"content": token}), event="message")
+            full_response += token
+            yield format_sse(format_token_to_openai_chat_completion_obj({"content": token}))
+
+        logging.debug(f"Full response: {full_response}")
+
+        # Stop events
+        yield format_sse(data=json.dumps({"choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}))
+        yield format_sse(data="[DONE]")
 
 
     except Exception as e:
