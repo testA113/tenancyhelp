@@ -1,0 +1,17 @@
+{
+    "id": "chatcmpl-991K3s2SzNI888VvimORINECQvj5k",
+    "object": "chat.completion.chunk",
+    "created": 1711937063,
+    "model": "gpt-3.5-turbo-0125",
+    "system_fingerprint": "fp_3bc1b5746c",
+    "choices": [
+        {
+            "index": 0,
+            "delta": {
+                "content": "Hello"
+            },
+            "logprobs": null,
+            "finish_reason": null
+        }
+    ]
+}
