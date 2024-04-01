@@ -12,3 +12,19 @@
 13/03/24
 
 - I got the summaries added to each tenancy service form, which improves how relevant the docs are.
+
+02/04/24
+
+- The backend streaming text response is similar (a subset) to the chat completions response for open ai. It uses server side events too, so the client can get a continuous stream of text. https://platform.openai.com/docs/api-reference/chat/streaming
+- From trying the vercel ai sdk, there wasn't much option to get objects in the streaming response, so I did a bad hack that concatenates the documents and the message with a delimiter. https://sdk.vercel.ai/docs/api-reference/providers/openai-stream. There might be an option to get the documents into the 'data' field for a single message, but it wasn't obvious.
+- The basic frontend works with this workaround which is really cool
+- Next tasks are:
+  - Allow the llamaindex agent to not fetch any documents for questions that don't need any references e.g. "Hi"
+  - Make the frontend experience nicer
+    - General styling
+    - Suggested starter questions
+    - Guide / disclaimer on what the app is good for
+  - Rate limiting
+  - MVP deployment
+  - Login to allow saving chats
+  - File upload
