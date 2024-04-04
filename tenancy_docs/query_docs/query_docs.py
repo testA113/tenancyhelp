@@ -27,7 +27,7 @@ from tenancy_docs.query_docs.node_post_processor import TopNodePostprocessor
 
 def create_chat_engine():
     Settings.embed_model = get_embed_model()
-    Settings.llm = OpenAI(model="gpt-4")
+    Settings.llm = OpenAI(model="gpt-3.5-turbo-0125")
 
     # load indexes for each source
     chroma_client = chromadb.PersistentClient(path="../index_docs/chroma_db")
@@ -35,7 +35,7 @@ def create_chat_engine():
     sources = [
         {
             "name": "tenancy_services_pdfs",
-            "description": "useful for when you want to answer queries that require guides and forms based on New Zealand tenancy laws.",
+            "description": "useful for when you want to answer queries that require guides and forms based on New Zealand tenancy laws. The notices and guides are good for emails",
         },
         {
             "name": "tribunal_cases",
@@ -63,7 +63,7 @@ def create_chat_engine():
 
     retriever = RouterRetriever(
         selector=PydanticMultiSelector.from_defaults(
-            llm=OpenAI(model="gpt-3.5-turbo-1106")
+            llm=OpenAI(model="gpt-3.5-turbo-0125")
         ),
         retriever_tools=retriever_tools,
     )
@@ -117,20 +117,26 @@ def query_docs(
     try:
         logging.debug("Streaming response from chat engine")
         logging.debug(f"Message from user: {message}")
-        # initially, set the role with no content
-        yield format_sse(format_token_to_openai_chat_completion_obj({"role": "assistant", "content": ""}))
         
         # Iterate through the streaming response and yield the response text
         streaming_response: StreamingAgentChatResponse = chat_engine.stream_chat(message=message, chat_history=chat_history)
+
+        logging.debug("getting response")
+
+        # initially, set the role with no content
+        yield format_sse(format_token_to_openai_chat_completion_obj({"role": "assistant", "content": ""}))
 
         # Yield relevant documents information as soon as it's available
         documents = []
         for node_with_score in streaming_response.source_nodes:
             metadata = node_with_score.node.metadata
+            text = node_with_score.node.text
             document_info = {
+                "id": node_with_score.node_id,
+                "source": metadata.get("source", ""),
                 "title": metadata.get("title", ""),
                 "doc_url": metadata.get("doc_url", ""),
-                "page_label": metadata.get("page_label", "")
+                "page_label": metadata.get("page_label", ""),
             }
             documents.append(document_info)
         logging.debug(f"Found documents: {documents}")
@@ -150,8 +156,9 @@ def query_docs(
 
     except Exception as e:
         # log full stack trace
-        logging.exception(e)
-        yield format_sse(json.dumps({"error": str(e)}), event="error")
+        print('wrong\n\n\n')
+        # throw the error to the caller
+        raise e
 
 # used for testing purposes
 if __name__ == "__main__":
