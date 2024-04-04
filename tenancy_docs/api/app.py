@@ -58,8 +58,12 @@ def chat():
         return {"error": "No message received in request"}, 400
 
     # Query chat engine and return response stream
-    response_stream = query_docs(chat_engine=chat_engine, message=message, chat_history=chat_history)
-    return Response(response_stream, mimetype="text/event-stream")
+    try:
+        response_stream = query_docs(chat_engine=chat_engine, message=message, chat_history=chat_history)
+        return Response(response_stream, mimetype="text/event-stream")
+    except Exception as e:
+        logging.exception(e)
+        return {"error": "No messages received in request"}, 500
 
 if __name__ == "__main__":
     app.run(debug=True)
