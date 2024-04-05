@@ -1583,6 +1583,20 @@ torch = ">=2.1.2,<3.0.0"
 transformers = {version = ">=4.37.0,<5.0.0", extras = ["torch"]}
 
 [[package]]
+name = "llama-index-llms-ollama"
+version = "0.1.2"
+description = "llama-index llms ollama integration"
+optional = false
+python-versions = ">=3.8.1,<4.0"
+files = [
+    {file = "llama_index_llms_ollama-0.1.2-py3-none-any.whl", hash = "sha256:967d816e13a6e064f8454b2faf7b70c749a52230258cac67b6025e20db6e988c"},
+    {file = "llama_index_llms_ollama-0.1.2.tar.gz", hash = "sha256:19ec727d048c873915d5b037d9a2fe956520c019b11d7ab8c3c406dd11f34e4b"},
+]
+
+[package.dependencies]
+llama-index-core = ">=0.10.1,<0.11.0"
+
+[[package]]
 name = "llama-index-llms-openai"
 version = "0.1.9"
 description = "llama-index llms openai integration"
@@ -4914,4 +4928,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "0f6d8c68a7e051fe1e0a66f7d2ea05768f9ada5d07132767e3815856dacad8bd"
+content-hash = "360acbe2fab4b0513978421b1dc1d6da36bfb56831c9595b365e2e3ae46bc7fa"
