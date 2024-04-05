@@ -1,5 +1,3 @@
-// (e: FormEvent<HTMLFormElement>, chatRequestOptions?: ChatRequestOptions | undefined) => void
-
 import { Dispatch, RefObject, SetStateAction } from "react";
 
 import { Button } from "@/ui/button";
@@ -31,7 +29,7 @@ export function EmptyScreen({
   inputRef,
 }: {
   setInput: Dispatch<SetStateAction<string>>;
-  inputRef: RefObject<HTMLInputElement>;
+  inputRef: RefObject<HTMLTextAreaElement>;
 }) {
   return (
     <div className="mx-auto max-w-2xl px-4">
@@ -39,9 +37,9 @@ export function EmptyScreen({
         <h1 className="mb-2 text-lg md:text-2xl font-semibold">
           Welcome to Tenancy Help!
         </h1>
-        <p className="mb-2 leading-normal text-muted-foreground">
-          This chatbot is a tenancy advisor specifically designed for tenants in
-          New Zealand.
+        <p className="mb-2 leading-normal">
+          The tenancy advisor chatbot specifically designed for tenants in New
+          Zealand.
         </p>
         <p className="mb-2">
           If you're a tenant, its goal is to resolve disputes between you and
@@ -56,13 +54,15 @@ export function EmptyScreen({
           </ExternalLink>{" "}
           and Tenancy Tribunal cases.
         </p>
-        <p className="mb-2 leading-normal text-muted-foreground">
+        <p className="mb-2 leading-normal">
           The chatbot is powered by{" "}
           <ExternalLink href="https://openai.com/chatgpt">ChatGPT</ExternalLink>{" "}
           which may occasionally provide inaccurate information. Please verify
           all advice and references.
         </p>
-        <p className="text-gray-500 text-sm">- Made with ♥️ by Ali Harris</p>
+        <p className="text-muted-foreground text-sm">
+          - Made with ♥️ by Ali Harris
+        </p>
       </div>
       <h2 className="text-lg font-semibold mb-2">Try an example!</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
@@ -77,6 +77,7 @@ export function EmptyScreen({
               setInput(message);
               inputRef.current?.focus();
             }}
+            variant="outline"
           >
             <IconArrowRight className="mr-2 text-muted-foreground shrink-0" />
             {message}
