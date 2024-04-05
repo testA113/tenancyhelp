@@ -7,6 +7,8 @@ from llama_index.core.llms import ChatMessage, MessageRole
 from llama_index.llms.anthropic import Anthropic
 from llama_index.llms.openai import OpenAI
 from llama_index.core.tools import RetrieverTool
+from llama_index.llms.ollama import Ollama
+from llama_index.core import Settings
 import chromadb
 from llama_index.core.selectors import (
     PydanticMultiSelector,
@@ -27,7 +29,7 @@ from tenancy_docs.query_docs.node_post_processor import TopNodePostprocessor
 
 def create_chat_engine():
     Settings.embed_model = get_embed_model()
-    Settings.llm = OpenAI(model="gpt-3.5-turbo-0125")
+    Settings.llm = Ollama(model="openchat:7b-v3.5-0106", request_timeout=60.0)
 
     # load indexes for each source
     chroma_client = chromadb.PersistentClient(path="../index_docs/chroma_db")
@@ -63,7 +65,7 @@ def create_chat_engine():
 
     retriever = RouterRetriever(
         selector=PydanticMultiSelector.from_defaults(
-            llm=OpenAI(model="gpt-3.5-turbo-0125")
+            llm=OpenAI(model="gpt-3.5-turbo-0125", temperature=0)
         ),
         retriever_tools=retriever_tools,
     )
