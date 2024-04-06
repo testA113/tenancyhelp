@@ -25,7 +25,7 @@ export default function Chat() {
     setInput,
     isLoading,
     error,
-  } = useChat();
+  } = useChat({ sendExtraMessageFields: true });
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { formRef, onKeyDown } = useEnterSubmit();
   const hasChatStarted = messages.length > 0;

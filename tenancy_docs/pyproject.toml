@@ -21,10 +21,12 @@ llama-index-llms-huggingface = "^0.1.4"
 llama-index-embeddings-huggingface = "^0.1.4"
 flask = "^3.0.2"
 llama-index-llms-ollama = "^0.1.2"
+gunicorn = "^21.2.0"
 
 [tool.poetry.group.dev.dependencies]
 python = "^3.11"
 mypy = "^1.2"
+black = "^24.3.0"
 ruff = "^0"
 
 
