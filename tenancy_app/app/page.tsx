@@ -9,8 +9,6 @@ import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
 import { Button } from "@/components/ui/button";
 import { IconPlus, IconArrowElbow } from "@/components/ui/icons";
 import { Textarea } from "@/components/ui/textarea";
-import { IconArrowRight } from "@/ui/icons";
-import { cn } from "@/lib/utils";
 import {
   Tooltip,
   TooltipTrigger,
@@ -18,28 +16,16 @@ import {
 } from "./components/ui/tooltip";
 import { ExampleQueries } from "./components/example-queries";
 
-type ExampleQuery = {
-  message: string;
-  hideWhenSmall?: boolean;
-};
-
-const exampleQueries: Array<ExampleQuery> = [
-  { message: "My landlord is withholding my bond, what should I do?" },
-  { message: "The toilet is broken, make an email to my landlord to fix it." },
-  {
-    message: "My landlord asked to increase my rent, are they allowed to?",
-    hideWhenSmall: true,
-  },
-  {
-    message:
-      "My landlord entered the property without notice, what are my rights?",
-    hideWhenSmall: true,
-  },
-];
-
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit, setInput } =
-    useChat();
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    setInput,
+    isLoading,
+    error,
+  } = useChat();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { formRef, onKeyDown } = useEnterSubmit();
   const hasChatStarted = messages.length > 0;
@@ -47,7 +33,11 @@ export default function Chat() {
   return (
     <div>
       <div className="pb-[200px] pt-4 md:pt-10">
-        {hasChatStarted ? <ChatList messages={messages} /> : <EmptyScreen />}
+        {hasChatStarted ? (
+          <ChatList messages={messages} isLoading={isLoading} error={error} />
+        ) : (
+          <EmptyScreen />
+        )}
         <ChatScrollAnchor trackVisibility={true} />
       </div>
       <div className="fixed inset-x-0 bottom-0 w-full duration-300 ease-in-out animate-in dark:from-background/10 dark:from-10% dark:to-background/80 peer-[[data-state=open]]:group-[]:lg:pl-[250px] peer-[[data-state=open]]:group-[]:xl:pl-[300px]">
