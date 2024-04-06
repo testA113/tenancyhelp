@@ -1,3 +1,5 @@
+import { Message } from "ai";
+
 export type Source = {
   id: string;
   title: string;
@@ -11,3 +13,7 @@ export type ParsedSource = {
   doc_url: string;
   page_labels: string[];
 };
+
+export type ParsedMessage = {
+  sources?: Array<ParsedSource>;
+} & Message;
