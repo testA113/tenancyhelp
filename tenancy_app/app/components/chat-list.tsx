@@ -1,6 +1,6 @@
 import { Message } from "ai";
 
-import { Source } from "../types";
+import { ParsedSource, Source } from "../types";
 import { IconAI, IconUser } from "@/ui/icons";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
@@ -8,7 +8,7 @@ import { Separator } from "@/ui/separator";
 import { FileTextIcon } from "@radix-ui/react-icons";
 
 type ParsedMessage = {
-  documents?: Source[];
+  sources?: Array<ParsedSource>;
 } & Message;
 
 export function ChatList({ messages }: { messages: Array<Message> }) {
@@ -21,7 +21,7 @@ export function ChatList({ messages }: { messages: Array<Message> }) {
             {message.role === "user" ? (
               <UserMessage>{message.content}</UserMessage>
             ) : (
-              <BotMessage sources={message.documents}>
+              <BotMessage sources={message.sources}>
                 {message.content}
               </BotMessage>
             )}
@@ -53,7 +53,7 @@ export function BotMessage({
 }: {
   children: React.ReactNode;
   className?: string;
-  sources?: Source[];
+  sources?: Array<ParsedSource>;
 }) {
   return (
     <div className="flex flex-col">
@@ -70,7 +70,7 @@ export function BotMessage({
   );
 }
 
-function Sources({ sources }: { sources?: Source[] }) {
+function Sources({ sources }: { sources?: Array<ParsedSource> }) {
   if (!sources) {
     return null;
   }
@@ -84,7 +84,7 @@ function Sources({ sources }: { sources?: Source[] }) {
   );
 }
 
-function Source({ source }: { source: Source }) {
+function Source({ source }: { source: ParsedSource }) {
   return (
     <div className="flex flex-col p-2 border rounded-lg bg-card">
       <div className="flex">
@@ -94,7 +94,7 @@ function Source({ source }: { source: Source }) {
         </a>
       </div>
       <p className="text-muted-foreground text-sm ml-2">
-        Page {source.page_label}
+        Page {source.page_labels.join(", ")}
       </p>
     </div>
   );
@@ -107,7 +107,30 @@ function parseMessages(messages: Message[]): ParsedMessage[] {
     } else {
       const [documentsString, content] = message.content.split("||||");
       const documents = JSON.parse(documentsString) as Array<Source>;
-      return { ...message, content: content.trim(), documents };
+      return {
+        ...message,
+        content: content.trim(),
+        sources: parseSources(documents),
+      };
     }
   });
+}
+
+function parseSources(sources: Array<Source>): Array<ParsedSource> {
+  // if there is a document with the same url, we group them together and combine the page labels in an array
+  const groupedSources = sources.reduce((acc, source) => {
+    const existingSource = acc.find((d) => d.doc_url === source.doc_url);
+    if (existingSource) {
+      const newSortedPageLabels = [
+        ...existingSource.page_labels,
+        source.page_label,
+      ].sort((a, b) => Number(a) - Number(b));
+      existingSource.page_labels = newSortedPageLabels;
+    } else {
+      acc.push({ ...source, page_labels: [source.page_label] });
+    }
+    return acc;
+  }, [] as Array<ParsedSource>);
+
+  return groupedSources;
 }
