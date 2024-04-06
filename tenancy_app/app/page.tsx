@@ -3,7 +3,7 @@
 import { useChat } from "ai/react";
 import { EmptyScreen } from "@/components/empty-screen";
 import { useRef } from "react";
-import { ChatList } from "@/components/chat-list";
+import { ChatList } from "@/app/components/chat/chat-list";
 import { ChatScrollAnchor } from "@/lib/hooks/chat-scroll-anchor";
 import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
 import { Button } from "@/components/ui/button";
