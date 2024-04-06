@@ -6,33 +6,55 @@ import { useRef } from "react";
 import { ChatList } from "@/components/chat-list";
 import { ChatScrollAnchor } from "@/lib/hooks/chat-scroll-anchor";
 import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
-import { Button } from "./components/ui/button";
-import { IconPlus, IconArrowElbow } from "./components/ui/icons";
-import { Textarea } from "./components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { IconPlus, IconArrowElbow } from "@/components/ui/icons";
+import { Textarea } from "@/components/ui/textarea";
+import { IconArrowRight } from "@/ui/icons";
+import { cn } from "@/lib/utils";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
 } from "./components/ui/tooltip";
+import { ExampleQueries } from "./components/example-queries";
+
+type ExampleQuery = {
+  message: string;
+  hideWhenSmall?: boolean;
+};
+
+const exampleQueries: Array<ExampleQuery> = [
+  { message: "My landlord is withholding my bond, what should I do?" },
+  { message: "The toilet is broken, make an email to my landlord to fix it." },
+  {
+    message: "My landlord asked to increase my rent, are they allowed to?",
+    hideWhenSmall: true,
+  },
+  {
+    message:
+      "My landlord entered the property without notice, what are my rights?",
+    hideWhenSmall: true,
+  },
+];
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, setInput } =
     useChat();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { formRef, onKeyDown } = useEnterSubmit();
+  const hasChatStarted = messages.length > 0;
 
   return (
     <div>
       <div className="pb-[200px] pt-4 md:pt-10">
-        {messages.length > 0 ? (
-          <ChatList messages={messages} />
-        ) : (
-          <EmptyScreen setInput={setInput} inputRef={inputRef} />
-        )}
+        {hasChatStarted ? <ChatList messages={messages} /> : <EmptyScreen />}
         <ChatScrollAnchor trackVisibility={true} />
       </div>
-      <div className="fixed inset-x-0 bottom-0 w-full bg-gradient-to-b from-muted/30 from-0% to-muted/30 to-50% duration-300 ease-in-out animate-in dark:from-background/10 dark:from-10% dark:to-background/80 peer-[[data-state=open]]:group-[]:lg:pl-[250px] peer-[[data-state=open]]:group-[]:xl:pl-[300px]">
+      <div className="fixed inset-x-0 bottom-0 w-full duration-300 ease-in-out animate-in dark:from-background/10 dark:from-10% dark:to-background/80 peer-[[data-state=open]]:group-[]:lg:pl-[250px] peer-[[data-state=open]]:group-[]:xl:pl-[300px]">
         <div className="mx-auto sm:max-w-2xl sm:px-4">
+          {!hasChatStarted && (
+            <ExampleQueries setInput={setInput} inputRef={inputRef} />
+          )}
           <div className="px-4 py-2 space-y-4 border-t shadow-lg bg-background sm:rounded-t-xl sm:border md:py-4">
             <form onSubmit={handleSubmit} ref={formRef}>
               <div className="relative flex flex-col w-full px-8 overflow-hidden max-h-60 grow bg-background sm:rounded-md sm:border sm:px-12">
