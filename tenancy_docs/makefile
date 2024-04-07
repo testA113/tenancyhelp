@@ -28,4 +28,6 @@ query_docs: query_docs/query_docs.py
 
 # Running the api server
 run_api: api/app.py
-	cd api/ && poetry run gunicorn -b 0.0.0.0:4321 tenancy_docs.api.app:app
+	cd api/ && poetry run gunicorn -b 0.0.0.0:5000 tenancy_docs.api.app:app
+run_flask: api/app.py
+	cd api/ && poetry run python app.py
