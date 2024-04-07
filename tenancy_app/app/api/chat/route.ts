@@ -1,22 +1,20 @@
-import OpenAI from 'openai';
-import { OpenAIStream, StreamingTextResponse } from 'ai';
+import OpenAI from "openai";
+import { OpenAIStream, StreamingTextResponse } from "ai";
 
 // Create an OpenAI API client (that's edge friendly!)
 // but configure it to point to fireworks.ai
 const fireworks = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
-  baseURL: 'http://127.0.0.1:4321',
+  apiKey: process.env.OPENAI_API_KEY || "",
+  baseURL: "http://127.0.0.1:5000",
 });
 // IMPORTANT! Set the runtime to edge
-export const runtime = 'edge';
+export const runtime = "edge";
 export async function POST(req: Request) {
   // Extract the `messages` from the body of the request
   const { messages } = await req.json();
 
-  // Ask Fireworks for a streaming chat completion using Llama 2 70b model
-  // @see https://app.fireworks.ai/models/fireworks/llama-v2-70b-chat
   const response = await fireworks.chat.completions.create({
-    model: 'accounts/fireworks/models/llama-v2-70b-chat',
+    model: "asdf", // doesn't reach api yet
     stream: true,
     max_tokens: 1000,
     messages,
