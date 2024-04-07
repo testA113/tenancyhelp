@@ -25,6 +25,8 @@ export default function Chat() {
     setInput,
     isLoading,
     error,
+    stop,
+    reload,
   } = useChat({ sendExtraMessageFields: true });
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { formRef, onKeyDown } = useEnterSubmit();
@@ -34,7 +36,13 @@ export default function Chat() {
     <div>
       <div className="pb-[200px] pt-4 md:pt-10">
         {hasChatStarted ? (
-          <ChatList messages={messages} isLoading={isLoading} error={error} />
+          <ChatList
+            messages={messages}
+            isLoading={isLoading}
+            error={error}
+            reload={reload}
+            stop={stop}
+          />
         ) : (
           <EmptyScreen />
         )}

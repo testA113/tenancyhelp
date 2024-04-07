@@ -29,7 +29,7 @@ from tenancy_docs.query_docs.node_post_processor import TopNodePostprocessor
 
 def create_chat_engine():
     Settings.embed_model = get_embed_model()
-    Settings.llm = Ollama(model="openchat:7b-v3.5-0106", request_timeout=60.0)
+    Settings.llm = OpenAI(model="gpt-3.5-turbo", request_timeout=60.0)
 
     # load indexes for each source
     chroma_client = chromadb.PersistentClient(path="../index_docs/chroma_db")
@@ -89,18 +89,23 @@ def format_sse(data: str, event=None) -> str:
         msg = f"event: {event}\n{msg}"
     return msg
 
-# gets {"content": token} or {"role": "assistant"} and transforms into 
+
+# gets {"content": token} or {"role": "assistant"} and transforms into
 # `{"choices":[{"delta":{"content": token}}]}` or `{"choices":[{"delta":{"role": "assistant"}}]}` format
 # https://platform.openai.com/docs/api-reference/chat/streaming
 def format_token_to_openai_chat_completion_obj(delta: dict) -> str:
     if "content" in delta or "role" in delta or "documents" in delta:
-        return json.dumps({"choices": [{"delta": delta, "index":0, "finish_reason":None}]})
+        return json.dumps(
+            {"choices": [{"delta": delta, "index": 0, "finish_reason": None}]}
+        )
     else:
         return json.dumps({"error": "Invalid delta format"})
 
 
 def query_docs(
-    chat_engine: CondensePlusContextChatEngine, message: str, chat_history: Optional[List[ChatMessage]]
+    chat_engine: CondensePlusContextChatEngine,
+    message: str,
+    chat_history: Optional[List[ChatMessage]],
 ) -> Generator[str, None, None]:
     """
     Queries the chat engine for relevant documents and yields the document information and response text.
@@ -119,14 +124,20 @@ def query_docs(
     try:
         logging.debug("Streaming response from chat engine")
         logging.debug(f"Message from user: {message}")
-        
+
         # Iterate through the streaming response and yield the response text
-        streaming_response: StreamingAgentChatResponse = chat_engine.stream_chat(message=message, chat_history=chat_history)
+        streaming_response: StreamingAgentChatResponse = chat_engine.stream_chat(
+            message=message, chat_history=chat_history
+        )
 
         logging.debug("getting response")
 
         # initially, set the role with no content
-        yield format_sse(format_token_to_openai_chat_completion_obj({"role": "assistant", "content": ""}))
+        yield format_sse(
+            format_token_to_openai_chat_completion_obj(
+                {"role": "assistant", "content": ""}
+            )
+        )
 
         # Yield relevant documents information as soon as it's available
         documents = []
@@ -142,25 +153,35 @@ def query_docs(
             }
             documents.append(document_info)
         logging.debug(f"Found documents: {documents}")
-        yield format_sse(format_token_to_openai_chat_completion_obj({"content": f"{json.dumps(documents)}||||"})) # add a unique delimiter to separate the documents from the response
+        yield format_sse(
+            format_token_to_openai_chat_completion_obj(
+                {"content": f"{json.dumps(documents)}||||"}
+            )
+        )  # add a unique delimiter to separate the documents from the response
 
         # Yield the response text as soon as it's available
         full_response = ""
         for token in streaming_response.response_gen:
             full_response += token
-            yield format_sse(format_token_to_openai_chat_completion_obj({"content": token}))
+            yield format_sse(
+                format_token_to_openai_chat_completion_obj({"content": token})
+            )
         logging.debug(f"Full response: {full_response}")
 
         # Stop events
-        yield format_sse(data=json.dumps({"choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}))
+        yield format_sse(
+            data=json.dumps(
+                {"choices": [{"index": 0, "delta": {}, "finish_reason": "stop"}]}
+            )
+        )
         yield format_sse(data="[DONE]")
-
 
     except Exception as e:
         # log full stack trace
-        print('wrong\n\n\n')
+        print("wrong\n\n\n")
         # throw the error to the caller
         raise e
+
 
 # used for testing purposes
 if __name__ == "__main__":
@@ -172,11 +193,15 @@ if __name__ == "__main__":
     chat_engine = create_chat_engine()
 
     message1 = "Create an email"
-    response1 = query_docs(chat_engine, message1, [
-        {
-            "role": "user",
-            "content": "The toilet is broken, what can I do to fix it as soon as possible?"
-        }
-    ])
+    response1 = query_docs(
+        chat_engine,
+        message1,
+        [
+            {
+                "role": "user",
+                "content": "The toilet is broken, what can I do to fix it as soon as possible?",
+            }
+        ],
+    )
     for response in response1:
         logging.info(response)

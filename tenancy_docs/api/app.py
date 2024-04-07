@@ -21,6 +21,7 @@ chat_engine = create_chat_engine()
 # Initialize Flask application
 app = Flask(__name__)
 
+
 @app.route("/chat/completions", methods=["POST"])
 def chat():
     """
@@ -48,7 +49,9 @@ def chat():
         role = chat_item.get("role")
         if role not in ["user", "assistant"]:
             logging.error(f"Invalid role: {role}")
-            return {"error": f"Invalid role: {role}. Role can only be 'user' or 'assistant'."}, 400
+            return {
+                "error": f"Invalid role: {role}. Role can only be 'user' or 'assistant'."
+            }, 400
         chat_history.append(ChatMessage(role=role, content=chat_item["content"]))
 
     # Get the latest message from the chat history
@@ -59,11 +62,14 @@ def chat():
 
     # Query chat engine and return response stream
     try:
-        response_stream = query_docs(chat_engine=chat_engine, message=message, chat_history=chat_history)
+        response_stream = query_docs(
+            chat_engine=chat_engine, message=message, chat_history=chat_history
+        )
         return Response(response_stream, mimetype="text/event-stream")
     except Exception as e:
         logging.exception(e)
         return {"error": "No messages received in request"}, 500
 
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port="4321")
