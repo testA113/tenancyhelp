@@ -20,7 +20,7 @@ export function MessageBlock({ message, reload, stop, isLoading }: Props) {
         <UserMessage>{message.content}</UserMessage>
       ) : (
         <BotMessage
-          sources={message.sources}
+          sources={message.annotations}
           isLoading={isLoading}
           messageContent={message.content}
           reload={reload}

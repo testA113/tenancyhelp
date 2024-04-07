@@ -1,19 +1,25 @@
 import { Message } from "ai";
 import { ParsedMessage, ParsedSource, Source } from "./types";
 
-export function parseMessages(messages: Message[]): ParsedMessage[] {
+/**
+ * Moves the sources from the message content to the annotations, for fomatting in the chat.
+ *
+ * @param messages - The array of messages to parse.
+ * @returns An array of parsed messages.
+ */
+export function parseMessagesForChat(messages: Message[]): ParsedMessage[] {
   return messages.map((message) => {
     if (message.role === "user") {
-      return message;
-    } else {
-      const [documentsString, content] = message.content.split("||||");
-      const documents = JSON.parse(documentsString) as Array<Source>;
-      return {
-        ...message,
-        content: content.trim(),
-        sources: parseSources(documents),
-      };
+      return { ...message, annotations: [] };
     }
+    // assistant role
+    const [sourcesString, content] = message.content.split("||||");
+    const documents = JSON.parse(sourcesString) as Array<Source>;
+    return {
+      ...message,
+      content: content.trim(),
+      annotations: parseSources(documents),
+    };
   });
 }
 
