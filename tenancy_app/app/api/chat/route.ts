@@ -3,8 +3,8 @@ import { OpenAIStream, StreamingTextResponse } from "ai";
 import { parseMessagesForRequest } from "./utils";
 
 // Create an OpenAI API client (that's edge friendly!)
-// but configure it to point to fireworks.ai
-const fireworks = new OpenAI({
+// but configure it to point to the local server
+const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || "",
   baseURL: "http://127.0.0.1:4321",
 });
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   // For each bot message, remove the sources string
   const parsedMessages = parseMessagesForRequest(messages);
 
-  const response = await fireworks.chat.completions.create({
+  const response = await client.chat.completions.create({
     model: "asdf", // doesn't reach api yet
     stream: true,
     max_tokens: 1000,
