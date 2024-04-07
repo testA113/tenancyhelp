@@ -1,6 +1,6 @@
 import { ChatRequestOptions, Message } from "ai";
 
-import { parseMessages } from "./utils";
+import { parseMessagesForChat } from "./utils";
 import { MessageBlock } from "./message-block";
 import { BotMessage } from "./bot-message";
 import { ChatResponseLoading } from "./loading-message";
@@ -16,7 +16,7 @@ type Props = {
 };
 
 export function ChatList({ messages, reload, stop, isLoading, error }: Props) {
-  const parsedMessages = parseMessages(messages);
+  const parsedMessages = parseMessagesForChat(messages);
   const isUserMessageLast =
     parsedMessages[parsedMessages.length - 1]?.role === "user";
 

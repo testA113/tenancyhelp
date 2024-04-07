@@ -15,5 +15,5 @@ export type ParsedSource = {
 };
 
 export type ParsedMessage = {
-  sources?: Array<ParsedSource>;
+  annotations?: Array<ParsedSource>;
 } & Message;
