@@ -28,8 +28,6 @@ export function BotMessage({
   className?: string;
   sources?: Array<ParsedSource>;
 }) {
-  const isComplete = !isLoading && messageContent;
-
   return (
     <div className="flex flex-col">
       <div className={cn("relative flex items-start md:-ml-12", className)}>
@@ -127,7 +125,7 @@ function CompletedActions({
   }, [showSuccessfulCopy]);
 
   return (
-    <div className="w-full flex gap-x-2">
+    <div className="flex gap-x-2 ml-12 md:ml-0">
       {/* copy output */}
       {!!messageContent && (
         <Tooltip>
