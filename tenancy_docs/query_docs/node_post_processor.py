@@ -12,13 +12,13 @@ class TopNodePostprocessor(BaseNodePostprocessor):
             # remove nodes with a score lower than 0.55 if the source is the tribunal_cases
             if (
                 node.metadata.get("source", "") == "tribunal_cases"
-                and node.score >= 0.55
+                and node.score >= 0.45
             ):
                 filteredNodes.append(node)
             # otherwise, remove nodes with a score lower than 0.45
             elif (
                 node.metadata.get("source", "") != "tribunal_cases"
-                and node.score >= 0.45
+                and node.score >= 0.40
             ):
                 filteredNodes.append(node)
 

@@ -39,7 +39,9 @@ export function CollapsibleContent({
         </Button>
       </Collapsible.Trigger>
 
-      <Collapsible.Content>{collapsibleContent}</Collapsible.Content>
+      <Collapsible.Content aria-expanded={open}>
+        {collapsibleContent}
+      </Collapsible.Content>
     </Collapsible.Root>
   );
 }
