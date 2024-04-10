@@ -28,7 +28,7 @@ export function EmptyScreen() {
         ></CollapsibleContent>
         <MoreInfo className="hidden sm:block" />
       </div>
-      <div className="text-sm text-center max-w-96">
+      <div className="text-sm text-center ml-auto mr-auto max-w-96">
         <Disclosure className="hidden sm:block" />
       </div>
     </div>
@@ -61,12 +61,7 @@ function MoreInfo({ className }: { className?: string }) {
 
 function Disclosure({ className }: { className?: string }) {
   return (
-    <p
-      className={cn(
-        className,
-        "leading-normal text-muted-foreground ml-auto mr-auto"
-      )}
-    >
+    <p className={cn(className, "leading-normal text-muted-foreground")}>
       Note: This chatbot it is not a substitute for professional legal advice.
       If you need help with a specific situation, please consult a lawyer or a{" "}
       <ExternalLink href="https://communitylaw.org.nz/">

@@ -11,7 +11,10 @@ type ExampleQuery = {
 
 const exampleQueries: Array<ExampleQuery> = [
   { message: "My landlord is withholding my bond, what should I do?" },
-  { message: "The toilet is broken, make an email to my landlord to fix it." },
+  {
+    message:
+      "The toilet broke, draft an email to my landlord with a 14 day notice to fix it.",
+  },
   {
     message: "My landlord asked to increase my rent, are they allowed to?",
     hideWhenSmall: true,

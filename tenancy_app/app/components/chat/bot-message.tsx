@@ -112,17 +112,17 @@ function CompletedActions({
   ) => Promise<string | null | undefined>;
   stop: () => void;
 }) {
-  const [showSuccessfulCopy, setShowSuccessfulCopy] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
-    if (showSuccessfulCopy) {
+    if (isCopied) {
       const timer = setTimeout(() => {
-        setShowSuccessfulCopy(false);
+        setIsCopied(false);
       }, 2000);
 
       return () => clearTimeout(timer);
     }
-  }, [showSuccessfulCopy]);
+  }, [isCopied]);
 
   return (
     <div className="flex gap-x-2 ml-12 md:ml-0">
@@ -136,8 +136,8 @@ function CompletedActions({
               variant="ghost"
               onClick={handleCopyClick}
             >
-              {!showSuccessfulCopy && <IconCopy />}
-              {showSuccessfulCopy && <IconCheck />}
+              {!isCopied && <IconCopy />}
+              {isCopied && <IconCheck />}
               <span className="sr-only">Copy advice</span>
             </Button>
           </TooltipTrigger>
@@ -157,7 +157,7 @@ function CompletedActions({
             <span className="sr-only">Rewrite</span>
           </Button>
         </TooltipTrigger>
-        <TooltipContent>Rewrite</TooltipContent>
+        <TooltipContent>Regenerate</TooltipContent>
       </Tooltip>
     </div>
   );
@@ -166,7 +166,7 @@ function CompletedActions({
     if (messageContent) {
       // copy the full message (children) to the clipboard
       navigator.clipboard.writeText(messageContent);
-      setShowSuccessfulCopy(true);
+      setIsCopied(true);
     }
   }
 }
