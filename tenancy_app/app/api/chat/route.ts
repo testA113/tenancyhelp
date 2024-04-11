@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
   const ratelimit = new Ratelimit({
     redis: Redis.fromEnv(),
-    limiter: Ratelimit.slidingWindow(20, "1 d"),
+    limiter: Ratelimit.slidingWindow(10, "1 d"),
   });
 
   const { success, limit, reset, remaining } = await ratelimit.limit(
