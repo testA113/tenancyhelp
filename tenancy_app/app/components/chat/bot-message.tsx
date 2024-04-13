@@ -72,11 +72,16 @@ function Sources({ sources }: { sources: Array<ParsedSource> }) {
 }
 
 function Source({ source }: { source: ParsedSource }) {
+  console.log(source.page_labels[0]);
   return (
     <div className="flex flex-col p-2 border rounded-lg bg-card">
       <div className="flex mb-2">
         <FileTextIcon className="h-6 w-auto p-1 flex-none" />
-        <a href={source.doc_url} target="_blank" className="underline">
+        <a
+          href={`${source.doc_url}#page=${source.page_labels[0]}`}
+          target="_blank"
+          className="underline"
+        >
           {source.title}
         </a>
       </div>
