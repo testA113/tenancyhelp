@@ -82,7 +82,6 @@ export default function Chat() {
                   autoFocus
                   spellCheck={false}
                   autoComplete="off"
-                  autoCorrect="off"
                   name="message"
                   rows={1}
                   value={input}
