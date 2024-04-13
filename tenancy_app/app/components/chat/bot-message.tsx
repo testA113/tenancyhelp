@@ -1,12 +1,17 @@
 import { cn, pluralise } from "@/app/lib/utils";
-import { FileTextIcon, ReloadIcon, StopIcon } from "@radix-ui/react-icons";
+import {
+  Copy,
+  CopyCheck,
+  RefreshCw,
+  Square,
+  FileText,
+  Sparkles,
+} from "lucide-react";
 import { ReactNode, useState, useEffect } from "react";
 import { Button } from "@/ui/button";
-import { IconAI, IconCopy, IconCheck } from "@/ui/icons";
 import { ParsedSource } from "./types";
 import { ChatResponseLoading } from "./loading-message";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/ui/tooltip";
-import { useChat } from "ai/react";
 import { ChatRequestOptions } from "ai";
 
 export function BotMessage({
@@ -33,7 +38,7 @@ export function BotMessage({
       <div className={cn("relative flex items-start md:-ml-12", className)}>
         <div className="flex flex-col gap-2">
           <div className="flex gap-2 h-8 w-8 shrink-0 select-none items-center justify-center rounded-md border shadow-sm bg-primary text-primary-foreground">
-            <IconAI />
+            <Sparkles className="h-4 w-4" />
           </div>
           {isLoading && <StopButton stop={stop} />}
         </div>
@@ -72,11 +77,10 @@ function Sources({ sources }: { sources: Array<ParsedSource> }) {
 }
 
 function Source({ source }: { source: ParsedSource }) {
-  console.log(source.page_labels[0]);
   return (
     <div className="flex flex-col p-2 border rounded-lg bg-card">
       <div className="flex mb-2">
-        <FileTextIcon className="h-6 w-auto p-1 flex-none" />
+        <FileText className="h-6 w-auto p-1 flex-none" />
         <a
           href={`${source.doc_url}#page=${source.page_labels[0]}`}
           target="_blank"
@@ -98,7 +102,7 @@ function StopButton({ stop }: { stop: () => void }) {
     <Tooltip>
       <TooltipTrigger asChild>
         <Button type="button" size="icon" variant="ghost" onClick={stop}>
-          <StopIcon />
+          <Square />
           <span className="sr-only">Stop</span>
         </Button>
       </TooltipTrigger>
@@ -141,8 +145,8 @@ function CompletedActions({
               variant="ghost"
               onClick={handleCopyClick}
             >
-              {!isCopied && <IconCopy />}
-              {isCopied && <IconCheck />}
+              {!isCopied && <Copy />}
+              {isCopied && <CopyCheck />}
               <span className="sr-only">Copy advice</span>
             </Button>
           </TooltipTrigger>
@@ -158,7 +162,7 @@ function CompletedActions({
             variant="ghost"
             onClick={() => reload()}
           >
-            <ReloadIcon />
+            <RefreshCw />
             <span className="sr-only">Rewrite</span>
           </Button>
         </TooltipTrigger>

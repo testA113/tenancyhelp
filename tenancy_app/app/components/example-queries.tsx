@@ -1,8 +1,8 @@
 import { Dispatch, RefObject, SetStateAction } from "react";
 
 import { Button } from "@/ui/button";
-import { IconArrowRight } from "@/ui/icons";
 import { cn } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
 
 type ExampleQuery = {
   message: string;
@@ -48,7 +48,7 @@ export function ExampleQueries({
           }}
           variant="outline"
         >
-          <IconArrowRight className="mr-2 text-muted-foreground shrink-0" />
+          <ArrowRight className="mr-2 text-muted-foreground shrink-0" />
           {message}
         </Button>
       ))}

@@ -1,8 +1,8 @@
 import React, { ReactNode } from "react";
 import * as Collapsible from "@radix-ui/react-collapsible";
-import { CaretDownIcon } from "@radix-ui/react-icons";
 import { cn } from "@/app/lib/utils";
 import { Button } from "./button";
+import { ChevronDown } from "lucide-react";
 
 export function CollapsibleContent({
   childWhenOpen,
@@ -30,7 +30,7 @@ export function CollapsibleContent({
           className="!pl-0 mb-2 leading-normal text-muted-foreground border-none inset-0 w-fit flex gap-1 items-center"
         >
           {open ? childWhenOpen : childWhenClosed}
-          <CaretDownIcon
+          <ChevronDown
             className={cn(
               open ? "rotate-180" : "rotate-0",
               "transform duration-200"
