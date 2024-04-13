@@ -28,3 +28,19 @@
   - MVP deployment
   - Login to allow saving chats
   - File upload
+
+13/04/24
+
+- I got most of the above points done.
+  - Updated the node postprocessor to have a relevant minimum, so less docs are sent for general questions
+  - UI is nicer with a disclaimer, example questions and nice (although generic) styling
+  - Rate limiting - done, per ip
+- From the above list and new items, I want to do the following as a next step:
+  - Save all gpt4 conversations, with docs for training gpt3 to fine tune gpt3
+  - Allow login for accepted accounts
+  - Deployment - quick and dirty initially (local manchine with tunnels?)
+- After that:
+  - Finetune gpt3 and offer it with a higher rate limit
+  - Experiment with function calling (server to query and return indexed docs, then send to open ai assistant api). This gives cool options like:
+    - react server components with structured output - e.g. email template, suggest follow up questions
+  - Save chats
