@@ -143,13 +143,13 @@ def query_docs(
         documents = []
         for node_with_score in streaming_response.source_nodes:
             metadata = node_with_score.node.metadata
-            text = node_with_score.node.text
             document_info = {
                 "id": node_with_score.node_id,
                 "source": metadata.get("source", ""),
                 "title": metadata.get("title", ""),
                 "doc_url": metadata.get("doc_url", ""),
                 "page_label": metadata.get("page_label", ""),
+                "text": node_with_score.get_text(),
             }
             documents.append(document_info)
         logging.debug(f"Found documents: {documents}")
