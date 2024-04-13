@@ -7,7 +7,6 @@ import { ChatList } from "@/app/components/chat/chat-list";
 import { ChatScrollAnchor } from "@/lib/hooks/chat-scroll-anchor";
 import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
 import { Button } from "@/components/ui/button";
-import { IconPlus, IconArrowElbow } from "@/components/ui/icons";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Tooltip,
@@ -15,6 +14,7 @@ import {
   TooltipContent,
 } from "./components/ui/tooltip";
 import { ExampleQueries } from "./components/example-queries";
+import { CornerDownLeft, Plus } from "lucide-react";
 
 export default function Chat() {
   const {
@@ -67,7 +67,7 @@ export default function Chat() {
                         window.location.reload();
                       }}
                     >
-                      <IconPlus />
+                      <Plus />
                       <span className="sr-only">New Chat</span>
                     </Button>
                   </TooltipTrigger>
@@ -91,7 +91,7 @@ export default function Chat() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button type="submit" size="icon" disabled={input === ""}>
-                        <IconArrowElbow />
+                        <CornerDownLeft />
                         <span className="sr-only">Send message</span>
                       </Button>
                     </TooltipTrigger>

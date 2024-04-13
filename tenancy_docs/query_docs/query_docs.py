@@ -29,7 +29,7 @@ from tenancy_docs.query_docs.node_post_processor import TopNodePostprocessor
 
 def create_chat_engine():
     Settings.embed_model = get_embed_model()
-    Settings.llm = OpenAI(model="gpt-4", request_timeout=60.0)
+    Settings.llm = OpenAI(model="gpt-3.5-turbo-0125", request_timeout=60.0)
 
     # load indexes for each source
     chroma_client = chromadb.PersistentClient(path="../index_docs/chroma_db")
