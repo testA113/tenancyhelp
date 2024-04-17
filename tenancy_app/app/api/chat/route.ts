@@ -1,8 +1,9 @@
 import OpenAI from "openai";
 import { OpenAIStream, StreamingTextResponse } from "ai";
-import { parseMessagesForRequest } from "./utils";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+
+import { parseMessagesForRequest } from "./utils";
 
 // Create an OpenAI API client (that's edge friendly!)
 // but configure it to point to the local server
