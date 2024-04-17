@@ -1,22 +1,27 @@
 "use client";
 
 import { useChat } from "ai/react";
+import { useEffect, useRef } from "react";
+import { CornerDownLeft, Plus } from "lucide-react";
+import { useSession } from "next-auth/react";
+
 import { EmptyScreen } from "@/components/empty-screen";
-import { useRef } from "react";
-import { ChatList } from "@/app/components/chat/chat-list";
-import { ChatScrollAnchor } from "@/lib/hooks/chat-scroll-anchor";
-import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
+import { ChatList } from "@/components/chat/chat-list";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "./components/ui/tooltip";
-import { ExampleQueries } from "./components/example-queries";
-import { CornerDownLeft, Plus } from "lucide-react";
+} from "@/components/ui/tooltip";
+import { ExampleQueries } from "@/components/example-queries";
+import { ChatScrollAnchor } from "@/lib/hooks/chat-scroll-anchor";
+import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
+import { LoginModalStore } from "@/lib/store/login-modal-store";
 
-export default function Chat() {
+export default function Home() {
+  const loginModal = LoginModalStore();
+  const session = useSession();
   const {
     messages,
     input,
@@ -31,6 +36,15 @@ export default function Chat() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { formRef, onKeyDown } = useEnterSubmit();
   const hasChatStarted = messages.length > 0;
+
+  useEffect(() => {
+    if (session.status === "unauthenticated") {
+      loginModal.setOpen();
+    }
+    if (session.status === "authenticated" && loginModal.isOpen) {
+      loginModal.setClose();
+    }
+  }, [loginModal, session.status]);
 
   return (
     <div>

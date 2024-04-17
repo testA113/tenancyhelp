@@ -10,10 +10,14 @@ export function parseMessagesForRequest(
   messages: ChatCompletionMessageParam[]
 ): ChatCompletionMessageParam[] {
   return messages.map((message) => {
-    if (!message.content || message.role === "user") {
+    if (
+      !message.content ||
+      message.role === "user" ||
+      !message.content.includes("||||")
+    ) {
       return message;
     }
-    // assistant role - remove the embedded json sources, so the model doesn't get confused or repeat the sources back
+    // assistant role
     const [_, content] = message.content.split("||||");
     return {
       ...message,
