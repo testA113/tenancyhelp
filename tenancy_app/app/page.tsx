@@ -48,7 +48,7 @@ export default function Home() {
 
   return (
     <div>
-      <div className="pb-[200px] pt-4 md:pt-10">
+      <div className="pb-[200px] pt-10">
         {hasChatStarted ? (
           <ChatList
             messages={messages}
@@ -67,7 +67,7 @@ export default function Home() {
           {!hasChatStarted && (
             <ExampleQueries setInput={setInput} inputRef={inputRef} />
           )}
-          <div className="px-4 py-2 space-y-4 border-t shadow-lg bg-background sm:rounded-t-xl sm:border md:py-4">
+          <div className="px-4 py-2 space-y-4 border-t shadow-lg bg-background sm:rounded-t-xl sm:border md:py-4 border border-t-muted-foreground sm:border-muted-foreground">
             <form onSubmit={handleSubmit} ref={formRef}>
               <div className="relative flex flex-col w-full px-8 overflow-hidden max-h-60 grow bg-background sm:rounded-md sm:border sm:px-12">
                 <Tooltip>
@@ -91,7 +91,7 @@ export default function Home() {
                   ref={inputRef}
                   tabIndex={0}
                   onKeyDown={onKeyDown}
-                  placeholder="Send a message."
+                  placeholder="How can I help?"
                   className="min-h-[60px] w-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
                   autoFocus
                   spellCheck={false}
@@ -104,7 +104,12 @@ export default function Home() {
                 <div className="absolute right-0 top-4 sm:right-4">
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button type="submit" size="icon" disabled={input === ""}>
+                      <Button
+                        type="submit"
+                        size="icon"
+                        variant="default"
+                        disabled={input === ""}
+                      >
                         <CornerDownLeft />
                         <span className="sr-only">Send message</span>
                       </Button>

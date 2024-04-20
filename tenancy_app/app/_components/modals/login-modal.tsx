@@ -1,10 +1,12 @@
 "use client";
-import React from "react";
-import { Modal } from "./modal";
-import { LoginModalStore } from "@/lib/store/login-modal-store";
 import { signIn } from "next-auth/react";
+
+import { LoginModalStore } from "@/lib/store/login-modal-store";
+
 import { Google } from "../icons/google";
 import { Button } from "../ui/button";
+
+import { Modal } from "./modal";
 
 const LoginModal = () => {
   const loginModal = LoginModalStore();
