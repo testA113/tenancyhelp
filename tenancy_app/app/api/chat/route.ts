@@ -1,8 +1,13 @@
 import OpenAI from "openai";
 import { OpenAIStream, StreamingTextResponse } from "ai";
-import { parseMessagesForRequest } from "./utils";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
+
+import { authOptions } from "../auth/[...nextauth]/route";
+
+import { parseMessagesForRequest } from "./utils";
 
 // Create an OpenAI API client (that's edge friendly!)
 // but configure it to point to the local server
@@ -11,10 +16,13 @@ const client = new OpenAI({
   baseURL: process.env.BASE_URL || "http://127.0.0.1:4321",
 });
 
-// IMPORTANT! Set the runtime to edge
-export const runtime = "edge";
-
 export async function POST(req: Request) {
+  const session: any = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ message: "UnAuthorized" }, { status: 404 });
+  }
+
   // Rate limit the request
   const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
   const ratelimit = new Ratelimit({
