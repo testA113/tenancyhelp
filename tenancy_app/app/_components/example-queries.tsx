@@ -13,22 +13,22 @@ type ExampleQuery = {
 const exampleQueries: Array<ExampleQuery> = [
   {
     message: "Provide advice",
-    example: "e.g. My landlord is withholding my bond, what should I do?",
+    example: "My landlord is withholding my bond, what should I do?",
   },
   {
     message: "Draft an email to fix something",
     example:
-      "e.g. The toilet broke, draft an email to my landlord with a 14 day notice to fix it.",
+      "The toilet broke, draft an email to my landlord with a 14 day notice to fix it.",
   },
   {
     message: "Find laws from the Residential Tenancies Act",
-    example: "e.g. My landlord asked to increase my rent, are they allowed to?",
+    example: "My landlord asked to increase my rent, are they allowed to?",
     hideWhenSmall: true,
   },
   {
     message: "Find similar Tenancy Tribunal cases",
     example:
-      "e.g. I'm having issues with repairs not being done. How have similar cases been resolved?",
+      "I'm having issues with repairs not being done. How have similar cases been resolved?",
     hideWhenSmall: true,
   },
 ];
@@ -60,7 +60,9 @@ export function ExampleQueries({
             <ArrowRight className="mr-2 text-muted-foreground shrink-0" />
             <div className="flex flex-col">
               <div className="font-semibold">{message}</div>
-              <div className="text-muted-foreground text-sm">{example}</div>
+              <div className="text-muted-foreground text-sm">
+                e.g. {example}
+              </div>
             </div>
           </Button>
         ))}
