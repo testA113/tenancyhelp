@@ -2,7 +2,7 @@
 
 import { useChat } from "ai/react";
 import { useEffect, useRef } from "react";
-import { CornerDownLeft, Plus } from "lucide-react";
+import { CornerDownLeft } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 import { EmptyScreen } from "@/components/empty-screen";
@@ -69,24 +69,7 @@ export default function Home() {
           )}
           <div className="px-4 py-2 space-y-4 border-t shadow-lg bg-background sm:rounded-t-xl sm:border md:py-4 border border-t-muted-foreground sm:border-muted-foreground">
             <form onSubmit={handleSubmit} ref={formRef}>
-              <div className="relative flex flex-col w-full px-8 overflow-hidden max-h-60 grow bg-background sm:rounded-md sm:border sm:px-12">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="absolute left-0 w-8 h-8 p-0 rounded-full top-4 bg-background sm:left-4"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        window.location.reload();
-                      }}
-                    >
-                      <Plus />
-                      <span className="sr-only">New Chat</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>New Chat</TooltipContent>
-                </Tooltip>
+              <div className="relative flex flex-col w-full pr-8 overflow-hidden max-h-60 grow bg-background sm:rounded-md sm:border sm:pr-12">
                 <Textarea
                   ref={inputRef}
                   tabIndex={0}

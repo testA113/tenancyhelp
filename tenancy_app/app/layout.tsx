@@ -4,7 +4,7 @@ import { Inter, Passion_One } from "next/font/google";
 import { Providers } from "@/components/provider";
 import { SessionWrapper } from "@/components/session-wrapper";
 import { LoginModalNew } from "@/components/modals/login-modal-new";
-import { NavHeader } from "@/components/nav-header";
+import { NavHeader } from "@/components/nav-header/nav-header";
 
 import { cn } from "./_lib/utils";
 
