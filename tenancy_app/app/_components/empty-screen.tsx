@@ -7,7 +7,7 @@ export function EmptyScreen() {
   return (
     <div className="mx-auto max-w-2xl px-4">
       <Card>
-        <h1 className="mb-2 text-center">Welcome to Tenancy Help!</h1>
+        <h1 className="mb-2">Welcome to Tenancy Help!</h1>
         <p className="mb-2 leading-normal text-muted-foreground">
           If you&apos;re flatting in New Zealand, I&apos;m here to help. Backed
           by local laws and solid sources, I can give you advice on common
