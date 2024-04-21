@@ -68,7 +68,7 @@ export default function Home() {
           {!hasChatStarted && (
             <ExampleQueries setInput={setInput} inputRef={inputRef} />
           )}
-          <div className="px-4 py-2 space-y-4 border-t shadow-lg bg-background sm:rounded-t-xl sm:border md:py-4 border border-t-muted-foreground sm:border-muted-foreground">
+          <div className="pr-4 pt-2 pb-3 space-y-4 border-t shadow-lg bg-background sm:rounded-t-xl sm:border md:py-4 border border-t-muted-foreground sm:border-muted-foreground">
             <form onSubmit={handleSubmit} ref={formRef}>
               <div className="relative flex flex-col w-full pr-8 overflow-hidden max-h-60 grow bg-background sm:rounded-md sm:border sm:pr-12">
                 <Textarea
@@ -100,6 +100,11 @@ export default function Home() {
                     </TooltipTrigger>
                     <TooltipContent>Send message</TooltipContent>
                   </Tooltip>
+                </div>
+              </div>
+              <div className="w-full absolute bottom-0 text-xs text-muted-foreground text-center">
+                <div>
+                  *Tenancy Help can make mistakes, double check the advice
                 </div>
               </div>
             </form>
