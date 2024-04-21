@@ -44,7 +44,8 @@ export default function Home() {
     if (session.status === "authenticated" && loginModal.isOpen) {
       loginModal.setClose();
     }
-  }, [loginModal, session.status]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session.status]);
 
   return (
     <div>
