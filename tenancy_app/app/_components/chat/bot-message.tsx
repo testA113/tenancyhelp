@@ -18,19 +18,12 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ChatHistoryEventType } from "@/models/chat-history-training";
 
 import { ParsedSource } from "./types";
 import { ChatResponseLoading } from "./loading-message";
 
-export function BotMessage({
-  children, // the full message and components
-  messageContent, // the message string to use for the clipboard
-  reload,
-  stop,
-  isLoading,
-  className,
-  sources,
-}: {
+type Props = {
   children: ReactNode;
   messageContent?: string;
   reload: (
@@ -40,7 +33,19 @@ export function BotMessage({
   isLoading: boolean;
   className?: string;
   sources?: Array<ParsedSource>;
-}) {
+  onAddChatHistory: (eventType: ChatHistoryEventType) => void;
+};
+
+export function BotMessage({
+  children, // the full message and components
+  messageContent, // the message string to use for the clipboard
+  reload,
+  stop,
+  isLoading,
+  className,
+  sources,
+  onAddChatHistory,
+}: Props) {
   return (
     <div className="flex flex-col">
       <div className={cn("relative flex items-start md:-ml-12", className)}>
@@ -62,7 +67,7 @@ export function BotMessage({
         <CompletedActions
           messageContent={messageContent}
           reload={reload}
-          stop={stop}
+          onAddChatHistory={onAddChatHistory}
         />
       )}
       {!!sources?.length && <Sources sources={sources} />}
@@ -122,14 +127,20 @@ function StopButton({ stop }: { stop: () => void }) {
 function CompletedActions({
   messageContent,
   reload,
+  onAddChatHistory,
 }: {
   messageContent?: string;
   reload: (
     chatRequestOptions?: ChatRequestOptions | undefined
   ) => Promise<string | null | undefined>;
-  stop: () => void;
+  onAddChatHistory: (eventType: ChatHistoryEventType) => void;
 }) {
   const [isCopied, setIsCopied] = useState(false);
+  // ensure the events for a message are only sent once
+  const [isCopyEventSent, setIsCopyEventSent] = useState(false);
+  const [isRetryEventSent, setIsRetryEventSent] = useState(false);
+  const [isThumbsUpEventSent, setIsThumbsUpEventSent] = useState(false);
+  const [isThumbsDownEventSent, setIsThumbsDownEventSent] = useState(false);
 
   useEffect(() => {
     if (isCopied) {
@@ -168,23 +179,49 @@ function CompletedActions({
             type="button"
             size="icon"
             variant="ghost"
-            onClick={() => reload()}
+            onClick={() => {
+              reload();
+              if (!isRetryEventSent) {
+                onAddChatHistory("retry");
+                setIsRetryEventSent(true);
+              }
+            }}
           >
             <RefreshCw />
-            <span className="sr-only">Regenerate answer</span>
+            <span className="sr-only">Retry</span>
           </Button>
         </TooltipTrigger>
         <TooltipContent>Regenerate</TooltipContent>
       </Tooltip>
       {/* thumbs up */}
-      <Button type="button" size="icon" variant="ghost">
+      <Button
+        type="button"
+        size="icon"
+        variant="ghost"
+        onClick={() => {
+          if (!isThumbsUpEventSent) {
+            onAddChatHistory("like");
+            setIsThumbsUpEventSent(true);
+          }
+        }}
+      >
         <ThumbsUp />
-        <span className="sr-only">Good answer</span>
+        <span className="sr-only">Like</span>
       </Button>
       {/* thumbs down */}
-      <Button type="button" size="icon" variant="ghost">
+      <Button
+        type="button"
+        size="icon"
+        variant="ghost"
+        onClick={() => {
+          if (!isThumbsDownEventSent) {
+            onAddChatHistory("dislike");
+            setIsThumbsDownEventSent(true);
+          }
+        }}
+      >
         <ThumbsDown />
-        <span className="sr-only">Bad answer</span>
+        <span className="sr-only">Dislike</span>
       </Button>
     </div>
   );
@@ -194,6 +231,12 @@ function CompletedActions({
       // copy the full message (children) to the clipboard
       navigator.clipboard.writeText(messageContent);
       setIsCopied(true);
+
+      if (!isCopyEventSent) {
+        // add the message to the chat history
+        onAddChatHistory("copy");
+        setIsCopyEventSent(true);
+      }
     }
   }
 }

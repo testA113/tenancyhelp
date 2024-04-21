@@ -2,7 +2,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { ButtonHTMLAttributes, forwardRef } from "react";
 
-import { cn } from "@/app/_lib/utils";
+import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center rounded-md text-sm font-medium shadow ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
@@ -14,7 +14,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground fill-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border border-l-4 !border-l-primary border-foreground bg-background hover:bg-accent hover:text-accent-foreground",
+          "border border-l-4 border-l-primary border-y-foreground border-r-foreground bg-background hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "shadow-none hover:bg-accent hover:text-accent-foreground",
@@ -24,7 +24,7 @@ const buttonVariants = cva(
         default: "h-8 px-4 py-2 [&>svg]:w-4 [&>svg]:h-4",
         sm: "h-8 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
-        icon: "h-8 w-8 p-0 [&>svg]:w-4 [&>svg]:h-4",
+        icon: "border-l-1 border-l-foreground h-8 w-8 p-0 [&>svg]:w-4 [&>svg]:h-4",
       },
     },
     defaultVariants: {

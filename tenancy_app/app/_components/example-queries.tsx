@@ -1,8 +1,8 @@
 import { Dispatch, RefObject, SetStateAction } from "react";
 import { ArrowRight } from "lucide-react";
 
-import { Button } from "@/app/_components/ui/button";
-import { cn } from "@/app/_lib/utils";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type ExampleQuery = {
   message: string;

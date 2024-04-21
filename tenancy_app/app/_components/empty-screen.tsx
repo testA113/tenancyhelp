@@ -1,5 +1,5 @@
-import { ExternalLink } from "@/app/_components/ui/external-link";
-import { CollapsibleContent } from "@/app/_components/ui/collapsible-content";
+import { ExternalLink } from "@/components/ui/external-link";
+import { CollapsibleContent } from "@/components/ui/collapsible-content";
 
 import { Card } from "./ui/card";
 

@@ -3,7 +3,7 @@ import { Inter, Passion_One } from "next/font/google";
 
 import { Providers } from "@/components/provider";
 import { SessionWrapper } from "@/components/session-wrapper";
-import { LoginModal } from "@/app/_components/modals/login-modal";
+import { LoginModal } from "@/components/modals/login-modal";
 import { NavHeader } from "@/components/nav-header/nav-header";
 
 import { cn } from "./_lib/utils";
