@@ -1,22 +1,27 @@
 "use client";
 
 import { useChat } from "ai/react";
+import { useEffect, useRef } from "react";
+import { CornerDownLeft } from "lucide-react";
+import { useSession } from "next-auth/react";
+
 import { EmptyScreen } from "@/components/empty-screen";
-import { useRef } from "react";
-import { ChatList } from "@/app/components/chat/chat-list";
-import { ChatScrollAnchor } from "@/lib/hooks/chat-scroll-anchor";
-import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
+import { ChatList } from "@/components/chat/chat-list";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "./components/ui/tooltip";
-import { ExampleQueries } from "./components/example-queries";
-import { CornerDownLeft, Plus } from "lucide-react";
+} from "@/components/ui/tooltip";
+import { ExampleQueries } from "@/components/example-queries";
+import { ChatScrollAnchor } from "@/lib/hooks/chat-scroll-anchor";
+import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
+import { LoginModalStore } from "@/lib/store/login-modal-store";
 
-export default function Chat() {
+export default function Home() {
+  const loginModal = LoginModalStore();
+  const session = useSession();
   const {
     messages,
     input,
@@ -32,9 +37,19 @@ export default function Chat() {
   const { formRef, onKeyDown } = useEnterSubmit();
   const hasChatStarted = messages.length > 0;
 
+  useEffect(() => {
+    if (session.status === "unauthenticated") {
+      loginModal.setOpen();
+    }
+    if (session.status === "authenticated" && loginModal.isOpen) {
+      loginModal.setClose();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session.status]);
+
   return (
     <div>
-      <div className="pb-[200px] pt-4 md:pt-10">
+      <div className="pb-[200px] pt-20">
         {hasChatStarted ? (
           <ChatList
             messages={messages}
@@ -53,31 +68,14 @@ export default function Chat() {
           {!hasChatStarted && (
             <ExampleQueries setInput={setInput} inputRef={inputRef} />
           )}
-          <div className="px-4 py-2 space-y-4 border-t shadow-lg bg-background sm:rounded-t-xl sm:border md:py-4">
+          <div className="pr-4 pt-2 pb-3 space-y-4 border-t shadow-lg bg-background sm:rounded-t-xl sm:border md:py-4 border border-t-muted-foreground sm:border-muted-foreground">
             <form onSubmit={handleSubmit} ref={formRef}>
-              <div className="relative flex flex-col w-full px-8 overflow-hidden max-h-60 grow bg-background sm:rounded-md sm:border sm:px-12">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="absolute left-0 w-8 h-8 p-0 rounded-full top-4 bg-background sm:left-4"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        window.location.reload();
-                      }}
-                    >
-                      <Plus />
-                      <span className="sr-only">New Chat</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>New Chat</TooltipContent>
-                </Tooltip>
+              <div className="relative flex flex-col w-full pr-8 overflow-hidden max-h-60 grow bg-background sm:rounded-md sm:border sm:pr-12">
                 <Textarea
                   ref={inputRef}
                   tabIndex={0}
                   onKeyDown={onKeyDown}
-                  placeholder="Send a message."
+                  placeholder="How can I help?"
                   className="min-h-[60px] w-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
                   autoFocus
                   spellCheck={false}
@@ -90,13 +88,23 @@ export default function Chat() {
                 <div className="absolute right-0 top-4 sm:right-4">
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button type="submit" size="icon" disabled={input === ""}>
+                      <Button
+                        type="submit"
+                        size="icon"
+                        variant="default"
+                        disabled={input === ""}
+                      >
                         <CornerDownLeft />
                         <span className="sr-only">Send message</span>
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>Send message</TooltipContent>
                   </Tooltip>
+                </div>
+              </div>
+              <div className="w-full absolute bottom-0 text-xs text-muted-foreground text-center">
+                <div>
+                  *Tenancy Help can make mistakes, double check the advice
                 </div>
               </div>
             </form>
