@@ -8,7 +8,7 @@ import {
   ReactElement,
 } from "react";
 
-import { cn } from "@/app/_lib/utils";
+import { cn } from "@/lib/utils";
 
 const ToastProvider = ToastPrimitives.Provider;
 

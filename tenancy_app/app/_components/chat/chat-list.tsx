@@ -1,9 +1,12 @@
 import { ChatRequestOptions, Message } from "ai";
 
+import { ChatHistoryEventType } from "@/models/chat-history-training";
+
 import { parseMessagesForChat } from "./utils";
 import { MessageBlock } from "./message-block";
 import { BotMessage } from "./bot-message";
 import { ChatResponseLoading } from "./loading-message";
+import { useAddChatHistory } from "./use-add-chat-history";
 
 type Props = {
   messages: Array<Message>;
@@ -19,6 +22,15 @@ export function ChatList({ messages, reload, stop, isLoading, error }: Props) {
   const parsedMessages = parseMessagesForChat(messages);
   const isUserMessageLast =
     parsedMessages[parsedMessages.length - 1]?.role === "user";
+  const addChatHistoryMutation = useAddChatHistory();
+
+  function onAddChatHistory(eventType: ChatHistoryEventType) {
+    console.log("Adding chat history");
+    addChatHistoryMutation.mutate({
+      messages,
+      eventType,
+    });
+  }
 
   return (
     <div className="relative mx-auto max-w-2xl px-4 whitespace-pre-wrap">
@@ -29,6 +41,7 @@ export function ChatList({ messages, reload, stop, isLoading, error }: Props) {
           isLoading={isLoading}
           reload={reload}
           stop={stop}
+          onAddChatHistory={onAddChatHistory}
         />
       ))}
       {isUserMessageLast && isLoading ? (
@@ -37,6 +50,7 @@ export function ChatList({ messages, reload, stop, isLoading, error }: Props) {
           isLoading={isLoading}
           stop={stop}
           reload={reload}
+          onAddChatHistory={onAddChatHistory}
         >
           <ChatResponseLoading loadingMessage="Loading sources"></ChatResponseLoading>
         </BotMessage>
@@ -48,6 +62,7 @@ export function ChatList({ messages, reload, stop, isLoading, error }: Props) {
           className="text-red-500"
           stop={stop}
           reload={reload}
+          onAddChatHistory={onAddChatHistory}
         >
           {error.message}
         </BotMessage>
@@ -59,6 +74,7 @@ export function ChatList({ messages, reload, stop, isLoading, error }: Props) {
           className="text-red-500"
           stop={stop}
           reload={reload}
+          onAddChatHistory={onAddChatHistory}
         >
           Sorry, something went wrong. Try again?
         </BotMessage>

@@ -18,6 +18,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@tanstack/react-query": "^5.29.2",
     "@upstash/ratelimit": "^1.0.3",
     "@upstash/redis": "^1.29.0",
     "ai": "latest",
@@ -40,6 +41,7 @@
     "zustand": "^4.5.2"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.28.11",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^17.0.12",
     "@types/react": "18.2.8",

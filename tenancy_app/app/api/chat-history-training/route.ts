@@ -2,12 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 
 import { connectDB } from "@/lib/utils/connect-db";
-import Post from "@/models/chat-history-training";
+import {
+  ChatHistory,
+  ChatHistoryBody,
+  chatHistoryModel,
+} from "@/models/chat-history-training";
 
 import { authOptions } from "../auth/[...nextauth]/route";
 
 export const POST = async (request: NextRequest) => {
-  const data = await request.json();
+  const data: ChatHistory = await request.json();
 
   try {
     await connectDB();
@@ -16,18 +20,9 @@ export const POST = async (request: NextRequest) => {
     if (!session) {
       return NextResponse.json({ message: "UnAuthorized" }, { status: 404 });
     }
-    await Post.create({
-      title: data.title,
-      content: data.content,
-      image: data.image,
-
-      category: data.category,
-      author: {
-        id: session.user.id,
-        name: session.user.name,
-        avatar: session.user.image,
-        slug: "Software Developer",
-      },
+    await chatHistoryModel.create<ChatHistoryBody>({
+      ...data,
+      created: new Date(),
     });
     return NextResponse.json(
       { message: "Created Successfully" },

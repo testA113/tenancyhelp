@@ -2,7 +2,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { signIn } from "next-auth/react";
 
-import { LoginModalStore } from "@/app/_lib/store/login-modal-store";
+import { LoginModalStore } from "@/lib/store/login-modal-store";
 
 import { Button } from "../ui/button";
 import { Google } from "../icons/google";

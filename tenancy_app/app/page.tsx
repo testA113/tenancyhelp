@@ -49,7 +49,7 @@ export default function Home() {
 
   return (
     <div>
-      <div className="pb-[200px] pt-10">
+      <div className="pb-[200px] pt-20">
         {hasChatStarted ? (
           <ChatList
             messages={messages}

@@ -1,8 +1,11 @@
+import { ChatRequestOptions } from "ai";
+
+import { Separator } from "@/components/ui/separator";
+import { ChatHistoryEventType } from "@/models/chat-history-training";
+
 import { ParsedMessage } from "./types";
-import { Separator } from "@/app/_components/ui/separator";
 import { UserMessage } from "./user-message";
 import { BotMessage } from "./bot-message";
-import { ChatRequestOptions } from "ai";
 
 type Props = {
   message: ParsedMessage;
@@ -11,9 +14,16 @@ type Props = {
   ) => Promise<string | null | undefined>;
   stop: () => void;
   isLoading: boolean;
+  onAddChatHistory: (eventType: ChatHistoryEventType) => void;
 };
 
-export function MessageBlock({ message, reload, stop, isLoading }: Props) {
+export function MessageBlock({
+  message,
+  reload,
+  stop,
+  isLoading,
+  onAddChatHistory,
+}: Props) {
   return (
     <>
       {message.role === "user" ? (
@@ -25,6 +35,7 @@ export function MessageBlock({ message, reload, stop, isLoading }: Props) {
           messageContent={message.content}
           reload={reload}
           stop={stop}
+          onAddChatHistory={onAddChatHistory}
         >
           {message.content}
         </BotMessage>

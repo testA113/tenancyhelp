@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { ChevronDown } from "lucide-react";
 
-import { cn } from "@/app/_lib/utils";
+import { cn } from "@/lib/utils";
 
 import { Button } from "./button";
 

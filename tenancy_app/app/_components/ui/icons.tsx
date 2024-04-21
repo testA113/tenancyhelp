@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/app/_lib/utils";
+import { cn } from "@/lib/utils";
 
 function IconAI({ className, ...props }: React.ComponentProps<"svg">) {
   return (
