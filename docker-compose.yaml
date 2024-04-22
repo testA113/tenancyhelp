@@ -1,0 +1,20 @@
+services:
+  tenancy-app:
+    container_name: tenancy-app
+    build:
+      context: ./tenancy_app
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - ./tenancy_app/.env.local
+    ports:
+      - 3000:3000
+    networks:
+      - my_network
+
+  # Add more containers below (nginx, postgres, etc.)
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  my_network:
