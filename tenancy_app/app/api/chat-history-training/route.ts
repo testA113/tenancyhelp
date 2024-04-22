@@ -8,7 +8,7 @@ import {
   chatHistoryModel,
 } from "@/models/chat-history-training";
 
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../auth/[...nextauth]/auth-config";
 
 export const POST = async (request: NextRequest) => {
   const data: ChatHistory = await request.json();

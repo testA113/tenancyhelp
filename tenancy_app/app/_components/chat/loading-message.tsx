@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+
 import { spinner } from "../ui/spinner";
 
 export function ChatResponseLoading({ loadingMessage = "Thinking" }) {
