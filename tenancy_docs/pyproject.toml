@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["testa113 <testa113>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -18,7 +19,7 @@ llama-index = "^0.10.19"
 pypdf = "^4.1.0"
 llama-index-vector-stores-chroma = "^0.1.6"
 llama-index-llms-huggingface = "^0.1.4"
-llama-index-embeddings-huggingface = "^0.1.4"
+llama-index-embeddings-huggingface = "^0.2.0"
 flask = "^3.0.2"
 llama-index-llms-ollama = "^0.1.2"
 gunicorn = "^21.2.0"
