@@ -1,5 +1,6 @@
 import logging
 import dotenv
+import os
 
 from llama_index.core import Settings, VectorStoreIndex
 from llama_index.vector_stores.chroma import ChromaVectorStore
@@ -29,10 +30,14 @@ from tenancy_docs.query_docs.node_post_processor import TopNodePostprocessor
 
 def create_chat_engine():
     Settings.embed_model = get_embed_model()
-    Settings.llm = OpenAI(model="gpt-3.5-turbo-0125", request_timeout=60.0)
+    Settings.llm = OpenAI(model="gpt-4-turbo", request_timeout=60.0)
 
     # load indexes for each source
-    chroma_client = chromadb.PersistentClient(path="../index_docs/chroma_db")
+    hostname = os.environ.get("CHROMA_HOSTNAME")
+    if hostname is None:
+        chroma_client = chromadb.PersistentClient(path="../index_docs/chroma_db")
+    else:
+        chroma_client = chromadb.HttpClient(host=hostname, port=8000)
 
     sources = [
         {
