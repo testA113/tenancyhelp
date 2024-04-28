@@ -1,36 +1,35 @@
+import json
 import logging
-import dotenv
 import os
+from typing import Generator, List, Optional
 
-from llama_index.core import Settings, VectorStoreIndex
-from llama_index.vector_stores.chroma import ChromaVectorStore
-from llama_index.core.llms import ChatMessage, MessageRole
-from llama_index.llms.anthropic import Anthropic
-from llama_index.llms.openai import OpenAI
-from llama_index.core.tools import RetrieverTool
-from llama_index.llms.ollama import Ollama
-from llama_index.core import Settings
 import chromadb
-from llama_index.core.selectors import (
-    PydanticMultiSelector,
-)
-from llama_index.core.chat_engine.types import (
-    StreamingAgentChatResponse,
-)
-from llama_index.core.retrievers import RouterRetriever
+import dotenv
+from llama_index.core import Settings, VectorStoreIndex
 from llama_index.core.chat_engine.condense_plus_context import (
     CondensePlusContextChatEngine,
 )
-from tenancy_docs.index_docs.utils import get_embed_model
-import json
-from typing import Generator, List, Optional
+from llama_index.core.chat_engine.types import StreamingAgentChatResponse
+from llama_index.core.llms import ChatMessage
+from llama_index.core.retrievers import RouterRetriever
+from llama_index.core.selectors import PydanticMultiSelector
+from llama_index.core.tools import RetrieverTool
+from llama_index.llms.openai import OpenAI
+from llama_index.vector_stores.chroma import ChromaVectorStore
 
+from tenancy_docs.index_docs.utils import get_embed_model
 from tenancy_docs.query_docs.node_post_processor import TopNodePostprocessor
 
 
 def create_chat_engine():
+    """
+    Creates and returns an instance of the CondensePlusContextChatEngine.
+
+    Returns:
+        CondensePlusContextChatEngine: The chat engine instance.
+    """
     Settings.embed_model = get_embed_model()
-    Settings.llm = OpenAI(model="gpt-4-turbo", request_timeout=60.0)
+    Settings.llm = OpenAI(model="gpt-4-32k", request_timeout=60.0)
 
     # load indexes for each source
     hostname = os.environ.get("CHROMA_HOSTNAME")
@@ -77,38 +76,52 @@ def create_chat_engine():
     logging.debug("Retriever tool created", extra={"retriever_tools": retriever_tools})
 
     node_postprocessor = TopNodePostprocessor()
-    chat_engine = CondensePlusContextChatEngine.from_defaults(
+    engine = CondensePlusContextChatEngine.from_defaults(
         retriever=retriever,
         condense_question_prompt=None,
         node_postprocessors=[node_postprocessor],
         chat_history=None,
         system_prompt="You are tenancy advisor who helps tenants resolve disputes with their landlords using layman terms in a kind manner. Your answers must only apply to tenants and not landlords. You reference supporting documents and forms (include the relevant title and page numbers) only when they given in the query context. You are empathetic and always try to help the tenant resolve their issue. You are a good listener and must always ask clarifying questions to understand the tenant's situation.",
     )
-    return chat_engine
+    return engine
 
 
 def format_sse(data: str, event=None) -> str:
-    """Formats data for Server-Sent Events (SSE)."""
+    """
+    Formats the data for Server-Sent Events (SSE).
+
+    Args:
+        data (str): The data to be formatted.
+        event (Optional[str]): The event name.
+
+    Returns:
+        str: The formatted data for SSE.
+    """
     msg = f"data: {data}\n\n"
     if event is not None:
         msg = f"event: {event}\n{msg}"
     return msg
 
 
-# gets {"content": token} or {"role": "assistant"} and transforms into
-# `{"choices":[{"delta":{"content": token}}]}` or `{"choices":[{"delta":{"role": "assistant"}}]}` format
-# https://platform.openai.com/docs/api-reference/chat/streaming
 def format_token_to_openai_chat_completion_obj(delta: dict) -> str:
+    """
+    Formats the token to OpenAI chat completion object.
+
+    Args:
+        delta (dict): The token data.
+
+    Returns:
+        str: The formatted token in OpenAI chat completion object format.
+    """
     if "content" in delta or "role" in delta or "documents" in delta:
         return json.dumps(
             {"choices": [{"delta": delta, "index": 0, "finish_reason": None}]}
         )
-    else:
-        return json.dumps({"error": "Invalid delta format"})
+    return json.dumps({"error": "Invalid delta format"})
 
 
 def query_docs(
-    chat_engine: CondensePlusContextChatEngine,
+    engine: CondensePlusContextChatEngine,
     message: str,
     chat_history: Optional[List[ChatMessage]],
 ) -> Generator[str, None, None]:
@@ -116,7 +129,7 @@ def query_docs(
     Queries the chat engine for relevant documents and yields the document information and response text.
 
     Args:
-        chat_engine (CondensePlusContextChatEngine): The chat engine instance.
+        engine (CondensePlusContextChatEngine): The chat engine instance.
         message (str): The message to send to the chat engine.
         chat_history (Optional[List[ChatMessage]]): The chat history.
 
@@ -131,7 +144,7 @@ def query_docs(
         logging.debug(f"Message from user: {message}")
 
         # Iterate through the streaming response and yield the response text
-        streaming_response: StreamingAgentChatResponse = chat_engine.stream_chat(
+        streaming_response: StreamingAgentChatResponse = engine.stream_chat(
             message=message, chat_history=chat_history
         )
 
@@ -197,10 +210,10 @@ if __name__ == "__main__":
     dotenv.load_dotenv()
     chat_engine = create_chat_engine()
 
-    message1 = "Create an email"
+    MESSAGE1 = "Create an email"
     response1 = query_docs(
         chat_engine,
-        message1,
+        MESSAGE1,
         [
             {
                 "role": "user",
