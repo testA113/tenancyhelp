@@ -21,6 +21,13 @@ chat_engine = create_chat_engine()
 # Initialize Flask application
 app = Flask(__name__)
 
+@app.route("/healthcheck", methods=["GET"])
+def healthcheck():
+    """
+    Endpoint to handle health check requests. It receives a GET request.
+    The function returns a 200 status code and a message indicating that the service is up and running.
+    """
+    return {"status": "Service is up and running"}, 200
 
 @app.route("/chat/completions", methods=["POST"])
 def chat():

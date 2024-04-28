@@ -13,7 +13,7 @@ import { parseMessagesForRequest } from "./utils";
 // but configure it to point to the local server
 const client = new OpenAI({
   apiKey: "",
-  baseURL: process.env.BASE_URL || "http://127.0.0.1:4321",
+  baseURL: process.env.QUERY_URL || "http://127.0.0.1:4321",
 });
 
 export async function POST(req: Request) {

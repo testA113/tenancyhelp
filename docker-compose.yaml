@@ -1,4 +1,46 @@
 services:
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: chromadb
+    volumes:
+      - ./tenancy_docs/index_docs/chroma_db:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma # this is the default path, change it as needed
+      - ANONYMIZED_TELEMETRY=FALSE
+    ports:
+      - 8000:8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - net
+
+  tenancy-docs:
+    build:
+      context: ./tenancy_docs
+      dockerfile: Dockerfile
+    container_name: tenancy-docs
+    ports:
+      - "4321:4321"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4321/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+    environment:
+      - CHROMA_HOSTNAME=chromadb
+    command: poetry run gunicorn -b 0.0.0.0:4321 tenancy_docs.api.app:app
+    depends_on:
+      chromadb:
+        condition: service_healthy
+    networks:
+      - net
+
   tenancy-app:
     container_name: tenancy-app
     build:
@@ -9,12 +51,18 @@ services:
       - ./tenancy_app/.env.local
     ports:
       - 3000:3000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+    depends_on:
+      tenancy-docs:
+        condition: service_healthy
     networks:
-      - my_network
+      - net
 
-  # Add more containers below (nginx, postgres, etc.)
-
-# Define a network, which allows containers to communicate
-# with each other, by using their container name as a hostname
 networks:
-  my_network:
+  net:
+    driver: bridge
