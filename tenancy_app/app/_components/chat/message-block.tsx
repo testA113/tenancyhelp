@@ -1,4 +1,6 @@
 import { ChatRequestOptions } from "ai";
+import Markdown from "markdown-to-jsx";
+import React from "react";
 
 import { Separator } from "@/components/ui/separator";
 import { ChatHistoryEventType } from "@/models/chat-history-training";
@@ -37,7 +39,7 @@ export function MessageBlock({
           stop={stop}
           onAddChatHistory={onAddChatHistory}
         >
-          {message.content}
+          <Markdown>{message.content}</Markdown>
         </BotMessage>
       )}
       <Separator className="my-4 last:hidden" />

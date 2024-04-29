@@ -41,27 +41,27 @@ services:
     networks:
       - net
 
-  tenancy-app:
-    container_name: tenancy-app
-    build:
-      context: ./tenancy_app
-      dockerfile: Dockerfile
-    restart: always
-    env_file:
-      - ./tenancy_app/.env.local
-    ports:
-      - 3000:3000
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/healthcheck"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 15s
-    depends_on:
-      tenancy-docs:
-        condition: service_healthy
-    networks:
-      - net
+  # tenancy-app:
+  #   container_name: tenancy-app
+  #   build:
+  #     context: ./tenancy_app
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   env_file:
+  #     - ./tenancy_app/.env.local
+  #   ports:
+  #     - 3000:3000
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:3000/healthcheck"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
+  #     start_period: 15s
+  #   depends_on:
+  #     tenancy-docs:
+  #       condition: service_healthy
+  #   networks:
+  #     - net
 
 networks:
   net:
