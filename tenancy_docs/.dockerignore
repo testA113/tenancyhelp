@@ -1,0 +1,5 @@
+# ignore env files (.env and .env.local) in all folders
+**/.env
+**/.env.local
+# ignore chroma_db folder
+**/chroma_db
