@@ -74,7 +74,11 @@ def chat():
         response_stream = query_docs(
             engine=chat_engine, message=message, chat_history=chat_history
         )
-        return Response(response_stream, mimetype="text/event-stream")
+        return Response(
+            response_stream,
+            mimetype="text/event-stream",
+            headers={"Content-Type": "text/event-stream"},
+        )
     except Exception as e:
         logging.exception(e)
         return {"error": "No messages received in request"}, 500
