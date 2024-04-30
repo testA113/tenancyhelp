@@ -20,6 +20,8 @@ COPY poetry.lock pyproject.toml ./
 RUN poetry install --no-dev --no-interaction --no-ansi
 
 # Run your app
-COPY . /tenancy_docs
+COPY ./api /tenancy_docs/api
+COPY ./query_docs /tenancy_docs/query_docs
+COPY ./index_docs /tenancy_docs/index_docs
 EXPOSE 4321
 CMD ["poetry", "run", "gunicorn", "-b", "0.0.0.0:4321", "tenancy_docs.api.app:app"]
