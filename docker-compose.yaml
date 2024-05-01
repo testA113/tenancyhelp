@@ -34,6 +34,7 @@ services:
       start_period: 15s
     environment:
       - CHROMA_HOSTNAME=chromadb
+      - GPT_MODEL=gpt-3.5-turbo-0125 # or gpt-4 
     env_file:
       - ./tenancy_docs/api/.env
     command: poetry run gunicorn -b 0.0.0.0:4321 tenancy_docs.api.app:app
