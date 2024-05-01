@@ -24,10 +24,11 @@ export async function POST(req: Request) {
   }
 
   // Rate limit the request
+  const rateLimit = Number(process.env.CHAT_MESSAGE_DAILY_LIMIT) || 20;
   const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
   const ratelimit = new Ratelimit({
     redis: Redis.fromEnv(),
-    limiter: Ratelimit.slidingWindow(15, "1 d"),
+    limiter: Ratelimit.slidingWindow(rateLimit, "1 d"),
   });
 
   const { success, limit, reset, remaining } = await ratelimit.limit(
@@ -37,14 +38,17 @@ export async function POST(req: Request) {
   console.log({ success, limit, reset, remaining });
 
   if (!success) {
-    return new Response("You have reached your 20 message limit for the day.", {
-      status: 429,
-      headers: {
-        "X-RateLimit-Limit": limit.toString(),
-        "X-RateLimit-Remaining": remaining.toString(),
-        "X-RateLimit-Reset": reset.toString(),
-      },
-    });
+    return new Response(
+      `You have reached your ${rateLimit} message limit for the day.`,
+      {
+        status: 429,
+        headers: {
+          "X-RateLimit-Limit": limit.toString(),
+          "X-RateLimit-Remaining": remaining.toString(),
+          "X-RateLimit-Reset": reset.toString(),
+        },
+      }
+    );
   }
 
   // Extract the `messages` from the body of the request
