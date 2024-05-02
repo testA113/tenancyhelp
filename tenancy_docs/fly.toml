@@ -1,0 +1,28 @@
+# fly.toml app configuration file generated for tenancy-docs on 2024-05-02T00:26:07+12:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'tenancy-docs'
+primary_region = 'syd'
+
+[build]
+
+[http_service]
+  internal_port = 4321
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[env]
+  ANONYMIZED_TELEMETRY= 'False'
+  TOKENIZERS_PARALLELISM= 'False'
+  CHROMA_HOSTNAME= 'chroma-db.internal'
+  GPT_MODEL= 'gpt-3.5-turbo-0125'
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
