@@ -1,0 +1,27 @@
+# fly.toml app configuration file generated for chroma-db on 2024-05-02T01:02:23+12:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'chroma-db'
+primary_region = 'syd'
+
+[build]
+
+[env]
+  IS_PERSISTENT = 'TRUE'
+  PERSIST_DIRECTORY = '/chroma/chroma' 
+  ANONYMIZED_TELEMETRY = 'FALSE'
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '2gb'
+  cpu_kind = 'shared'
+  cpus = 1

@@ -34,7 +34,7 @@ services:
       start_period: 15s
     environment:
       - CHROMA_HOSTNAME=chromadb
-      - GPT_MODEL=gpt-3.5-turbo-0125 # or gpt-4 
+      - GPT_MODEL=gpt-3.5-turbo-0125 # or gpt-4
     env_file:
       - ./tenancy_docs/api/.env
     command: poetry run gunicorn -b 0.0.0.0:4321 tenancy_docs.api.app:app
@@ -48,7 +48,7 @@ services:
     container_name: tenancy-app
     build:
       context: ./tenancy_app
-      dockerfile: Dockerfile
+      dockerfile: docker/local/Dockerfile
     restart: always
     ports:
       - 3000:3000

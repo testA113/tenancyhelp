@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build-dev": "cp .env.dev .env && next build",
+    "build-prod": "cp .env.prod .env && next build",
     "start": "next start",
     "lint": "next lint"
   },

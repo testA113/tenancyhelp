@@ -1,4 +1,3 @@
-# the dockerfile used by fly io for production
 FROM node:18-alpine AS base
 
 # Install dependencies only when needed
@@ -20,14 +19,14 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN yarn run build-prod
+RUN yarn run build-dev
 
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
 
 ENV NEXT_SHARP_PATH /app/node_modules/sharp
-ENV NODE_ENV production
+ENV NODE_ENV development
 ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN addgroup --system --gid 1001 nodejs
