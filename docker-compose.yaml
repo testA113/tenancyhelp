@@ -1,9 +1,8 @@
 services:
   chromadb:
-    image: chromadb/chroma:latest
-    container_name: chromadb
-    volumes:
-      - ./tenancy_docs/index_docs/chroma_db:/chroma/chroma
+    build:
+      context: ./tenancy_docs/index_docs
+      dockerfile: Dockerfile
     environment:
       - IS_PERSISTENT=TRUE
       - PERSIST_DIRECTORY=/chroma/chroma # this is the default path, change it as needed
@@ -34,10 +33,11 @@ services:
       start_period: 15s
     environment:
       - CHROMA_HOSTNAME=chromadb
+      - CHROMA_SSL=false
+      - CHROMA_PORT=8000
       - GPT_MODEL=gpt-3.5-turbo-0125 # or gpt-4
     env_file:
       - ./tenancy_docs/api/.env
-    command: poetry run gunicorn -b 0.0.0.0:4321 tenancy_docs.api.app:app
     depends_on:
       chromadb:
         condition: service_healthy

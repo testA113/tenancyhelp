@@ -31,12 +31,19 @@ def create_chat_engine():
     Settings.embed_model = get_embed_model()
     Settings.llm = OpenAI(model=os.environ.get("GPT_MODEL"), request_timeout=60.0)
 
-    # load indexes for each source
-    hostname = os.environ.get("CHROMA_HOSTNAME")
-    if hostname is None:
-        chroma_client = chromadb.PersistentClient(path="../index_docs/chroma_db")
-    else:
-        chroma_client = chromadb.HttpClient(host=hostname, port=8000)
+    try:
+        # load indexes for each source
+        hostname = os.environ.get("CHROMA_HOSTNAME")
+        port = os.environ.get("CHROMA_PORT")
+        ssl = os.environ.get("CHROMA_SSL").lower() == "true"
+        if hostname is None:
+            chroma_client = chromadb.PersistentClient(path="../index_docs/chroma_db")
+        else:
+            logging.debug(f"Connecting to ChromaDB at {hostname} and port {port}")
+            chroma_client = chromadb.HttpClient(host=hostname, port=port, ssl=ssl)
+    except Exception as e:
+        logging.error(f"Error connecting to ChromaDB: {e}")
+        raise e
 
     sources = [
         {
