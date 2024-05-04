@@ -3,8 +3,9 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { signIn } from "next-auth/react";
 
 import { LoginModalStore } from "@/lib/store/login-modal-store";
+import { Button } from "@/ui/button";
+import { InternalLink } from "@/ui/internal-link";
 
-import { Button } from "../ui/button";
 import { Google } from "../icons/google";
 
 export const LoginModal = () => {
@@ -21,7 +22,7 @@ export const LoginModal = () => {
             <p className="mb-2">
               You&apos;re the first to get access to Tenancy Help! It&apos;s
               been able to help with my most complicated flatting situations
-              over 10 years - I hope it can help you too.
+              over 10 years - I hope it can help you too - Ali Harris
             </p>
             <p className="mb-2">
               Your queries will help train the GPT model to improve it&apos;s
@@ -31,6 +32,14 @@ export const LoginModal = () => {
               While in this insiders group, please don&apos;t send any personal
               or identifying information.
             </p>
+            <div className="w-full flex justify-between">
+              <InternalLink target="_blank" href="/terms">
+                Terms
+              </InternalLink>
+              <InternalLink target="_blank" href="/privacy">
+                Privacy Policy
+              </InternalLink>
+            </div>
           </Dialog.Description>
           <Button
             variant="default"
