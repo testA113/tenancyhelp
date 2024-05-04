@@ -44,3 +44,15 @@
   - Experiment with function calling (server to query and return indexed docs, then send to open ai assistant api). This gives cool options like:
     - react server components with structured output - e.g. email template, suggest follow up questions
   - Save chats
+
+04/05/24
+
+- I got all of the immediate items done! (save conversations, allow logins, and deployment with fly.io)
+- To share, I need to do small fixes and tweaks, to have the existing functionality more usable:
+  - Get privacy and terms pages made so that people can login with google
+  - Fix iphone zoom in and submit behaviour
+- I'm still keen to add the points from 13/04 after that. They are:
+  - Finetune gpt3 and offer it with a higher rate limit
+  - Experiment with function calling (server to query and return indexed docs, then send to open ai assistant api). This gives cool options like:
+    - react server components with structured output - e.g. email template, suggest follow up questions
+  - Save chats
