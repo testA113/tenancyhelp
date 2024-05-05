@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": " cp .env.dev .env && next dev",
-    "build-dev": "cp .env.dev .env && next build",
+    "dev": "cp .env.dev .env && next dev",
+    "build-local": "cp .env.docker .env && next build",
     "build-prod": "cp .env.prod .env && next build",
     "start": "next start",
     "lint": "next lint"

@@ -2,7 +2,6 @@
 import { Plus } from "lucide-react";
 import { useSession } from "next-auth/react";
 
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Button } from "../ui/button";
 
 import { HomeLink } from "./home-link";
@@ -25,39 +24,16 @@ export const NavHeader: React.FC = () => {
 
 function NewChatButton() {
   return (
-    <>
-      <div className="hidden md:block">
-        <Button
-          variant="outline"
-          className="hidden md:flex gap-x-1"
-          onClick={(e) => {
-            e.preventDefault();
-            window.location.reload();
-          }}
-        >
-          <Plus />
-          New Chat
-        </Button>
-      </div>
-      <div className="md:hidden">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className=" p-0 rounded-full md:hidden"
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.reload();
-              }}
-            >
-              <Plus />
-              <span className="sr-only">New Chat</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>New Chat</TooltipContent>
-        </Tooltip>
-      </div>
-    </>
+    <Button
+      variant="outline"
+      className="flex gap-x-1"
+      onClick={(e) => {
+        e.preventDefault();
+        window.location.reload();
+      }}
+    >
+      <Plus />
+      New Chat
+    </Button>
   );
 }
