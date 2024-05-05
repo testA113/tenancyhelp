@@ -76,7 +76,8 @@ export default function Home() {
                   tabIndex={0}
                   onKeyDown={onKeyDown}
                   placeholder="How can I help?"
-                  className="min-h-[60px] w-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
+                  // anything smaller than text base 16px is too small for iphone and causes zooming when the input is focused
+                  className="text-base min-h-[60px] w-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none"
                   autoFocus
                   spellCheck={false}
                   autoComplete="off"
