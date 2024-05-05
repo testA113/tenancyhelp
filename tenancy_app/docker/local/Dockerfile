@@ -19,7 +19,7 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN yarn run build-dev
+RUN yarn run build-local
 
 # Production image, copy all the files and run next
 FROM base AS runner
