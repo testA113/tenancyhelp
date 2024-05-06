@@ -69,6 +69,9 @@ export default function Home() {
             <ExampleQueries setInput={setInput} inputRef={inputRef} />
           )}
           <div className="pr-4 pt-2 space-y-4 border-t shadow-lg bg-background sm:rounded-t-xl sm:border md:pt-4 border border-t-muted-foreground sm:border-muted-foreground">
+            {error && (
+              <div className="text-center text-red-500">{error.message}</div>
+            )}
             <form onSubmit={handleSubmit} ref={formRef} id="chat">
               <div className="relative flex flex-col w-full pr-8 overflow-hidden max-h-60 grow bg-background sm:rounded-md sm:border sm:pr-12">
                 <Textarea
