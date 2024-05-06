@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "cp .env.dev .env && next dev",
+    "build-dev": "cp .env.dev .env && next build",
     "build-local": "cp .env.docker .env && next build",
     "build-prod": "cp .env.prod .env && next build",
     "start": "next start",
@@ -19,7 +20,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-tooltip": "^1.0.7",
-    "@tanstack/react-query": "^5.29.2",
+    "@tanstack/react-query": "^5.34.1",
     "@upstash/ratelimit": "^1.0.3",
     "@upstash/redis": "^1.29.0",
     "ai": "latest",
