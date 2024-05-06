@@ -26,12 +26,12 @@ export async function POST(req: Request) {
   // Rate limit the request
   const rateLimit = Number(process.env.CHAT_MESSAGE_DAILY_LIMIT) || 20;
   const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
-  const ratelimit = new Ratelimit({
+  const rateLimiter = new Ratelimit({
     redis: Redis.fromEnv(),
     limiter: Ratelimit.slidingWindow(rateLimit, "1 d"),
   });
 
-  const { success, limit, reset, remaining } = await ratelimit.limit(
+  const { success, limit, reset, remaining } = await rateLimiter.limit(
     `ratelimit_${ip}`
   );
   console.log(ip);
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
 
   if (!success) {
     return new Response(
-      `You have reached your ${rateLimit} message limit for the day.`,
+      `You have reached your ${rateLimit} message daily limit. Please try again later.`,
       {
         status: 429,
         headers: {
