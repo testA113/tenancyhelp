@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Inter, Passion_One } from "next/font/google";
+import { Metadata } from "next";
 
 import { Providers } from "@/components/provider";
 import { SessionWrapper } from "@/components/session-wrapper";
@@ -15,10 +16,27 @@ const passionOne = Passion_One({
   variable: "--font-passion-one",
 });
 
-export const metadata = {
-  title: "Tenancy Help",
+export const metadata: Metadata = {
+  title: "Tenancy Help NZ - Tenancy Advice",
   description:
     "Get help with your tenancy issues in New Zealand, backed by solid sources.",
+  openGraph: {
+    title: "Tenancy Help NZ - Tenancy Advice",
+    description:
+      "Get help with your tenancy issues in New Zealand, backed by solid sources.",
+    url: "https://tenancyhelp.com",
+    type: "website",
+    locale: "en_US",
+    siteName: "Tenancy Help NZ",
+    images: [
+      {
+        url: "https://tenancyhelp.com/tenancy-logo.png",
+        width: 2321,
+        height: 1000,
+        alt: "Tenancy Help NZ logo",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
