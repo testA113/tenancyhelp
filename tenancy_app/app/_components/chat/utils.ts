@@ -13,7 +13,7 @@ export function parseMessagesForChat(messages: Message[]): ParsedMessage[] {
     if (message.role === "user") {
       return { ...message, annotations: [] };
     }
-    console.log(message);
+
     // assistant role
     const [sourcesString, content] = message.content.split("||||");
     let documents: Array<Source> = [];

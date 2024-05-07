@@ -25,7 +25,6 @@ export function ChatList({ messages, reload, stop, isLoading, error }: Props) {
   const addChatHistoryMutation = useAddChatHistory();
 
   function onAddChatHistory(eventType: ChatHistoryEventType) {
-    console.log("Adding chat history");
     addChatHistoryMutation.mutate({
       messages,
       eventType,
