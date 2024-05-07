@@ -49,7 +49,7 @@ export default function Home() {
 
   return (
     <div>
-      <div className="pb-[200px] pt-20">
+      <div className="pb-32 md:pb-48 pt-20">
         {hasChatStarted ? (
           <ChatList
             messages={messages}
@@ -59,14 +59,23 @@ export default function Home() {
             stop={stop}
           />
         ) : (
-          <EmptyScreen />
+          <div className="flex flex-col">
+            <EmptyScreen />
+            {!hasChatStarted && (
+              <div className="md:hidden">
+                <ExampleQueries setInput={setInput} inputRef={inputRef} />
+              </div>
+            )}
+          </div>
         )}
         <ChatScrollAnchor trackVisibility={true} />
       </div>
       <div className="fixed inset-x-0 bottom-0 w-full duration-300 ease-in-out animate-in dark:from-background/10 dark:from-10% dark:to-background/80 peer-[[data-state=open]]:group-[]:lg:pl-[250px] peer-[[data-state=open]]:group-[]:xl:pl-[300px]">
         <div className="mx-auto sm:max-w-2xl sm:px-4">
           {!hasChatStarted && (
-            <ExampleQueries setInput={setInput} inputRef={inputRef} />
+            <div className="hidden md:block">
+              <ExampleQueries setInput={setInput} inputRef={inputRef} />
+            </div>
           )}
           <div className="pr-4 pt-2 space-y-4 border-t shadow-lg bg-background sm:rounded-t-xl sm:border md:pt-4 border border-t-muted-foreground sm:border-muted-foreground">
             {error && (
