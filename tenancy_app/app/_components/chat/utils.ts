@@ -13,12 +13,19 @@ export function parseMessagesForChat(messages: Message[]): ParsedMessage[] {
     if (message.role === "user") {
       return { ...message, annotations: [] };
     }
+    console.log(message);
     // assistant role
     const [sourcesString, content] = message.content.split("||||");
-    const documents = JSON.parse(sourcesString) as Array<Source>;
+    let documents: Array<Source> = [];
+    try {
+      documents = JSON.parse(sourcesString);
+    } catch (e) {
+      console.error("Failed to parse sources string", e);
+    }
+
     return {
       ...message,
-      content: content.trim(),
+      content: content?.trim() || "",
       annotations: parseSources(documents),
     };
   });
