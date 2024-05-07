@@ -39,7 +39,7 @@ export function MessageBlock({
           stop={stop}
           onAddChatHistory={onAddChatHistory}
         >
-          <Markdown>{message.content}</Markdown>
+          {message.content && <Markdown>{message.content}</Markdown>}
         </BotMessage>
       )}
       <Separator className="my-4 last:hidden" />

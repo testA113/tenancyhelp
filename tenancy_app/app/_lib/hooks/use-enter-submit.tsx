@@ -14,8 +14,14 @@ export function useEnterSubmit(): {
       !event.shiftKey &&
       !event.nativeEvent.isComposing
     ) {
-      formRef.current?.submit();
       event.preventDefault();
+      // similar to https://github.com/aws-amplify/amplify-js/pull/5333/files, fixing ios safari issue
+      const fakeButton = document.createElement("button");
+      fakeButton.type = "submit";
+      fakeButton.style.display = "none";
+      formRef.current?.appendChild(fakeButton);
+      fakeButton.click();
+      fakeButton.remove();
     }
   };
 
