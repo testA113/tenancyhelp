@@ -62,7 +62,7 @@ export default function Home() {
           <div className="flex flex-col">
             <EmptyScreen />
             {!hasChatStarted && (
-              <div className="md:hidden">
+              <div className="tall:hidden">
                 <ExampleQueries setInput={setInput} inputRef={inputRef} />
               </div>
             )}
@@ -73,13 +73,13 @@ export default function Home() {
       <div className="fixed inset-x-0 bottom-0 w-full duration-300 ease-in-out animate-in dark:from-background/10 dark:from-10% dark:to-background/80 peer-[[data-state=open]]:group-[]:lg:pl-[250px] peer-[[data-state=open]]:group-[]:xl:pl-[300px]">
         <div className="mx-auto sm:max-w-2xl sm:px-4">
           {!hasChatStarted && (
-            <div className="hidden md:block">
+            <div className="hidden tall:block">
               <ExampleQueries setInput={setInput} inputRef={inputRef} />
             </div>
           )}
           <div className="pr-4 pt-2 space-y-4 border-t shadow-lg bg-background sm:rounded-t-xl sm:border md:pt-4 border border-t-muted-foreground sm:border-muted-foreground">
             {error && (
-              <div className="text-center text-red-500">{error.message}</div>
+              <div className="text-center text-red-700">{error.message}</div>
             )}
             <form onSubmit={handleSubmit} ref={formRef} id="chat">
               <div className="relative flex flex-col w-full pr-8 overflow-hidden max-h-60 grow bg-background sm:rounded-md sm:border sm:pr-12">

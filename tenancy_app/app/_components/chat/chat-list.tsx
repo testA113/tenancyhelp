@@ -58,7 +58,7 @@ export function ChatList({ messages, reload, stop, isLoading, error }: Props) {
         <BotMessage
           sources={[]}
           isLoading={false}
-          className="text-red-500"
+          className="text-red-700"
           stop={stop}
           reload={reload}
           onAddChatHistory={onAddChatHistory}
@@ -70,7 +70,7 @@ export function ChatList({ messages, reload, stop, isLoading, error }: Props) {
         <BotMessage
           sources={[]}
           isLoading={isLoading}
-          className="text-red-500"
+          className="text-red-700"
           stop={stop}
           reload={reload}
           onAddChatHistory={onAddChatHistory}
