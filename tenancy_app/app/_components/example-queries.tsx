@@ -49,7 +49,7 @@ export function ExampleQueries({
     <>
       <h2 className="mb-2 text-center">
         What can I do?
-        <Button variant="ghost" size="icon" className="ml-2 md:hidden">
+        <Button variant="ghost" size="icon" className="ml-2 sm:hidden">
           <RefreshCw
             onClick={() => {
               // show the next two examples. If we're at the end, show the first two
@@ -67,7 +67,7 @@ export function ExampleQueries({
           />
         </Button>
       </h2>
-      <div className="md:hidden mx-4 md:mx-0 grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+      <div className="sm:hidden mx-4 sm:mx-0 grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
         {exampleQueriesShown.map(({ message, example }) => (
           <ExampleQueryButton
             key={message}
@@ -78,7 +78,7 @@ export function ExampleQueries({
           />
         ))}
       </div>
-      <div className="md:grid mx-4 md:mx-0 hidden grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+      <div className="sm:grid mx-4 sm:mx-0 hidden grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
         {exampleQueries.map(({ message, example }) => (
           <ExampleQueryButton
             key={message}

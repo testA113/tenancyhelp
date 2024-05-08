@@ -90,6 +90,9 @@ const config: Config = {
         overlayShow: "overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1)",
         contentShow: "contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1)",
       },
+      screens: {
+        tall: { raw: "(min-height: 800px)" },
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
