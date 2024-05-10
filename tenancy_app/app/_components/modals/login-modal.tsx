@@ -1,14 +1,19 @@
 "use client";
 import * as Dialog from "@radix-ui/react-dialog";
 import { signIn } from "next-auth/react";
+import { browserName } from "react-device-detect";
 
 import { LoginModalStore } from "@/lib/store/login-modal-store";
 import { Button } from "@/ui/button";
 import { InternalLink } from "@/ui/internal-link";
 
 import { Google } from "../icons/google";
+import { Alert } from "../ui/alert";
 
 export const LoginModal = () => {
+  const isEmbeddedBrowser =
+    browserName === "Facebook" || browserName === "Instagram";
+
   const loginModal = LoginModalStore();
   return (
     <Dialog.Root open={loginModal.isOpen}>
@@ -49,6 +54,14 @@ export const LoginModal = () => {
             <Google />
             Continue with Google
           </Button>
+          {isEmbeddedBrowser && (
+            <Dialog.Description className="mt-5 leading-normal">
+              <Alert variant="warning">
+                You&apos;re using a browser that doesn&apos;t support login.
+                Please open this page in your main browser.
+              </Alert>
+            </Dialog.Description>
+          )}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
