@@ -3,13 +3,13 @@
 # Loading docs
 load_docs: 
 	make initialise_db
-	make initiialise_storage
+	make initialise_storage
 	make load_tenancy_pdfs
 	make load_tribunal_cases
 	make load_residential_tenancies_act
 initialise_db: load_docs/init_database.py
 	cd load_docs/ && poetry run python init_database.py
-initiialise_storage: load_docs/init_storage.py
+initialise_storage: load_docs/init_storage.py
 	cd load_docs/ && poetry run python init_storage.py
 load_tenancy_pdfs: load_docs/tenancy_services_pdfs/load_tenancy_services_pdfs.py
 	cd load_docs/tenancy_services_pdfs && poetry run python load_tenancy_services_pdfs.py

@@ -1,4 +1,2 @@
-doc_url = (
-    "https://www.legislation.govt.nz/act/public/1986/0120/latest/096be8ed81d2fc65.pdf"
-)
+doc_url = "https://public.tenancyhelp.com/Residential%20Tenancies%20Act%201986.pdf"
 source = "residential_tenancies_act"

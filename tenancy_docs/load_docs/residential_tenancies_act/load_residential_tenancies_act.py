@@ -7,13 +7,15 @@ from tenancy_docs.load_docs.residential_tenancies_act.save_metadata import (
     save_rta_metadata,
 )
 
-
 def save_residential_tenancies_act() -> None:
     """
     Loads the Residential Tenancies Act into the database and saves it locally.
     """
     response = requests.get(
-        constants.doc_url, stream=True, headers={"User-Agent": "Chrome/120.0.0.0"}
+        constants.doc_url,
+        stream=True,
+        headers={"User-Agent": "Chrome/120.0.0.0"},
+        timeout=20,
     )
     # save the file in the pdfs directory
     file_name = constants.doc_url.split("/")[-1]

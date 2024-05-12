@@ -2,6 +2,8 @@ import { ChatRequestOptions, Message } from "ai";
 
 import { ChatHistoryEventType } from "@/models/chat-history-training";
 
+import { Alert } from "../ui/alert";
+
 import { parseMessagesForChat } from "./utils";
 import { MessageBlock } from "./message-block";
 import { BotMessage } from "./bot-message";
@@ -63,7 +65,7 @@ export function ChatList({ messages, reload, stop, isLoading, error }: Props) {
           reload={reload}
           onAddChatHistory={onAddChatHistory}
         >
-          {error.message}
+          <Alert variant="error">{error.message}</Alert>
         </BotMessage>
       )}
       {isUserMessageLast && !isLoading && !error ? (

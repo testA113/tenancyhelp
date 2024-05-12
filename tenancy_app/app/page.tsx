@@ -78,7 +78,7 @@ export default function Home() {
             </div>
           )}
           <div className="pr-4 pt-2 space-y-4 border-t shadow-lg bg-background sm:rounded-t-xl sm:border md:pt-4 border border-t-muted-foreground sm:border-muted-foreground">
-            {error && (
+            {error && !hasChatStarted && (
               <div className="text-center text-red-700">{error.message}</div>
             )}
             <form onSubmit={handleSubmit} ref={formRef} id="chat">

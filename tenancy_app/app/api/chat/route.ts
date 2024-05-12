@@ -39,7 +39,7 @@ export async function POST(req: Request) {
 
   if (!success) {
     return new Response(
-      `Sadly, I'm not made of money and I have to limit use per person. You have reached your ${rateLimit} message daily limit. Please help TenancyHelp increase the limits by clicking like on the good advice you get. This will train a better model and reduce the costs so I can increase the limit.`,
+      `Sadly, I'm not made of money and I have to limit use per person. You have reached your ${rateLimit} message daily limit. Please help TenancyHelp increase the limits by clicking the 'thumbs up' on any good advice you get. This will train a better model and reduce the costs so I can increase the limit.`,
       {
         status: 429,
         headers: {
