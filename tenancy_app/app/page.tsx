@@ -4,6 +4,7 @@ import { useChat } from "ai/react";
 import { useEffect, useRef } from "react";
 import { CornerDownLeft } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useReCaptcha } from "next-recaptcha-v3";
 
 import { EmptyScreen } from "@/components/empty-screen";
 import { ChatList } from "@/components/chat/chat-list";
@@ -33,6 +34,7 @@ export default function Home() {
     stop,
     reload,
   } = useChat({ sendExtraMessageFields: true });
+  const { executeRecaptcha } = useReCaptcha();
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { formRef, onKeyDown } = useEnterSubmit();
   const hasChatStarted = messages.length > 0;
@@ -46,6 +48,12 @@ export default function Home() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.status]);
+
+  const handleSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const token = await executeRecaptcha("chat");
+    handleSubmit(e, { data: { token } });
+  };
 
   return (
     <div>
@@ -81,7 +89,7 @@ export default function Home() {
             {error && !hasChatStarted && (
               <div className="text-center text-red-700">{error.message}</div>
             )}
-            <form onSubmit={handleSubmit} ref={formRef} id="chat">
+            <form onSubmit={(e) => handleSubmitForm(e)} ref={formRef} id="chat">
               <div className="relative flex flex-col w-full pr-8 overflow-hidden max-h-60 grow bg-background sm:rounded-md sm:border sm:pr-12">
                 <Textarea
                   ref={inputRef}
@@ -90,6 +98,7 @@ export default function Home() {
                   placeholder="How can I help?"
                   // anything smaller than text base 16px is too small for iphone and causes zooming when the input is focused
                   className="text-base min-h-[60px] w-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none"
+                  // eslint-disable-next-line jsx-a11y/no-autofocus
                   autoFocus
                   spellCheck={false}
                   autoComplete="off"
