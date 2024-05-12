@@ -52,7 +52,31 @@ export async function POST(req: Request) {
   }
 
   // Extract the `messages` from the body of the request
-  const { messages } = await req.json();
+  const { messages, data } = await req.json();
+
+  // validate recaptchav3 token with a score above 0.5
+  try {
+    const recaptchaResponse = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify?${new URLSearchParams({
+        secret: process.env.RECAPTCHA_SECRET_KEY || "",
+        response: data.token,
+      })}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+    const recaptchaData = await recaptchaResponse.json();
+    console.log(recaptchaData);
+    if (!recaptchaData.success || recaptchaData.score < 0.5) {
+      return new Response("Recaptcha failed", { status: 403 });
+    }
+  } catch {
+    console.error("Recaptcha failed");
+    return new Response("Recaptcha failed", { status: 403 });
+  }
 
   // For each bot message, remove the sources string
   const parsedMessages = parseMessagesForRequest(messages);
