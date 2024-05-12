@@ -2,10 +2,6 @@ import OpenAI from "openai";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
-
-import { authOptions } from "../auth/[...nextauth]/auth-config";
 
 import { parseMessagesForRequest } from "./utils";
 
@@ -17,12 +13,6 @@ const client = new OpenAI({
 });
 
 export async function POST(req: Request) {
-  const session: any = await getServerSession(authOptions);
-
-  if (!session) {
-    return NextResponse.json({ message: "UnAuthorized" }, { status: 404 });
-  }
-
   // Rate limit the request
   const rateLimit = Number(process.env.CHAT_MESSAGE_DAILY_LIMIT) || 20;
   const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
@@ -52,7 +42,31 @@ export async function POST(req: Request) {
   }
 
   // Extract the `messages` from the body of the request
-  const { messages } = await req.json();
+  const { messages, data } = await req.json();
+
+  // validate recaptchav3 token with a score above 0.5
+  try {
+    const recaptchaResponse = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify?${new URLSearchParams({
+        secret: process.env.RECAPTCHA_SECRET_KEY || "",
+        response: data.token,
+      })}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+    const recaptchaData = await recaptchaResponse.json();
+    console.log(recaptchaData);
+    if (!recaptchaData.success || recaptchaData.score < 0.5) {
+      return new Response("Recaptcha failed", { status: 403 });
+    }
+  } catch {
+    console.error("Recaptcha failed");
+    return new Response("Recaptcha failed", { status: 403 });
+  }
 
   // For each bot message, remove the sources string
   const parsedMessages = parseMessagesForRequest(messages);

@@ -1818,7 +1818,7 @@ eslint-plugin-import@^2.26.0:
     semver "^6.3.1"
     tsconfig-paths "^3.15.0"
 
-eslint-plugin-jsx-a11y@^6.5.1:
+eslint-plugin-jsx-a11y@^6.5.1, eslint-plugin-jsx-a11y@^6.8.0:
   version "6.8.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-jsx-a11y/-/eslint-plugin-jsx-a11y-6.8.0.tgz#2fa9c701d44fcd722b7c771ec322432857fcbad2"
   integrity sha512-Hdh937BS3KdwwbBaKd5+PLCOmYY6U4f2h9Z2ktwtNKvIdIEu137rjYbcb9ApSbVJfWxANNuiKTD/9tOKjK9qOA==
@@ -2967,6 +2967,11 @@ next-auth@^4.24.7:
     preact "^10.6.3"
     preact-render-to-string "^5.1.19"
     uuid "^8.3.2"
+
+next-recaptcha-v3@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/next-recaptcha-v3/-/next-recaptcha-v3-1.4.1.tgz#8cbb3bd0f64c2b1da5a22414205f14635feff216"
+  integrity sha512-ZQXwcGHMIbXG3ppK6s2EGyTMjkVW5wARupQsBrFQbO6BhNlfBXAb3BVQEZt6uYyp12z5tf06DEa3JIqCqQoXTQ==
 
 next-themes@^0.3.0:
   version "0.3.0"

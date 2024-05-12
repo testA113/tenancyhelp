@@ -1,9 +1,10 @@
 {
   "extends": [
     "next/core-web-vitals",
-    "plugin:@tanstack/eslint-plugin-query/recommended"
+    "plugin:@tanstack/eslint-plugin-query/recommended",
+    "plugin:jsx-a11y/recommended"
   ],
-  "plugins": ["unused-imports", "@tanstack/query"],
+  "plugins": ["unused-imports", "@tanstack/query", "jsx-a11y"],
   "rules": {
     "unused-imports/no-unused-imports": "error",
     "import/order": [

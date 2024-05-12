@@ -3,6 +3,7 @@
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReCaptchaProvider } from "next-recaptcha-v3";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -38,10 +39,16 @@ function getQueryClient() {
 export function Providers({ children, ...props }: ThemeProviderProps) {
   const queryClient = getQueryClient();
   return (
-    <QueryClientProvider client={queryClient}>
-      <NextThemesProvider {...props}>
-        <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
-      </NextThemesProvider>
-    </QueryClientProvider>
+    <ReCaptchaProvider
+      className="hidden"
+      hidden
+      reCaptchaKey={process.env.RECAPTCHA_SITE_KEY}
+    >
+      <QueryClientProvider client={queryClient}>
+        <NextThemesProvider {...props}>
+          <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
+        </NextThemesProvider>
+      </QueryClientProvider>
+    </ReCaptchaProvider>
   );
 }

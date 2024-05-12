@@ -48,3 +48,7 @@
     padding: revert;
   }
 }
+
+.grecaptcha-badge {
+  visibility: hidden !important;
+}
