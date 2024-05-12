@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Inter, Passion_One } from "next/font/google";
 import { Metadata } from "next";
+import Script from "next/script";
 
 import { Providers } from "@/components/provider";
 import { SessionWrapper } from "@/components/session-wrapper";
@@ -47,6 +48,7 @@ export default function RootLayout({
   return (
     <SessionWrapper>
       <html lang="en" suppressHydrationWarning>
+        <Script src="https://scripts.simpleanalyticscdn.com/latest.js" />
         <body className={cn(inter.variable, passionOne.variable)}>
           <Providers
             attribute="class"

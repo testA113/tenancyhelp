@@ -31,7 +31,7 @@ def index_all_docs():
     chroma_client = PersistentClient(path="./chroma_db")
     for source in collection_sources:
         # Only do summary transformations for the tenancy_services_pdfs source
-        if source == "tenancy_services_pdfs":
+        if source == "tenancy_services_pdfs" or source == "residential_tenancies_act":
             Settings.transformations = get_transformations()
         index_source_docs(
             source=source,
