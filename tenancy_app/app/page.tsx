@@ -1,9 +1,8 @@
 "use client";
 
 import { useChat } from "ai/react";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { CornerDownLeft } from "lucide-react";
-import { useSession } from "next-auth/react";
 import { useReCaptcha } from "next-recaptcha-v3";
 
 import { EmptyScreen } from "@/components/empty-screen";
@@ -18,11 +17,8 @@ import {
 import { ExampleQueries } from "@/components/example-queries";
 import { ChatScrollAnchor } from "@/lib/hooks/chat-scroll-anchor";
 import { useEnterSubmit } from "@/lib/hooks/use-enter-submit";
-import { LoginModalStore } from "@/lib/store/login-modal-store";
 
 export default function Home() {
-  const loginModal = LoginModalStore();
-  const session = useSession();
   const {
     messages,
     input,
@@ -38,16 +34,6 @@ export default function Home() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { formRef, onKeyDown } = useEnterSubmit();
   const hasChatStarted = messages.length > 0;
-
-  useEffect(() => {
-    if (session.status === "unauthenticated") {
-      loginModal.setOpen();
-    }
-    if (session.status === "authenticated" && loginModal.isOpen) {
-      loginModal.setClose();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session.status]);
 
   const handleSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

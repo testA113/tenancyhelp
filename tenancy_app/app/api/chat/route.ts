@@ -2,10 +2,6 @@ import OpenAI from "openai";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
-
-import { authOptions } from "../auth/[...nextauth]/auth-config";
 
 import { parseMessagesForRequest } from "./utils";
 
@@ -17,12 +13,6 @@ const client = new OpenAI({
 });
 
 export async function POST(req: Request) {
-  const session: any = await getServerSession(authOptions);
-
-  if (!session) {
-    return NextResponse.json({ message: "UnAuthorized" }, { status: 404 });
-  }
-
   // Rate limit the request
   const rateLimit = Number(process.env.CHAT_MESSAGE_DAILY_LIMIT) || 20;
   const ip = req.headers.get("x-forwarded-for") || "127.0.0.1";
