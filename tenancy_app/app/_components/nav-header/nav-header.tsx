@@ -4,7 +4,6 @@ import { Plus } from "lucide-react";
 import { Button } from "../ui/button";
 
 import { HomeLink } from "./home-link";
-import { UserMenu } from "./user-menu";
 
 export const NavHeader: React.FC = () => {
   return (
@@ -13,7 +12,7 @@ export const NavHeader: React.FC = () => {
         <HomeLink />
         <div className="flex gap-x-2 md:gap-x-4 items-center">
           <NewChatButton />
-          <UserMenu />
+          {/* <UserMenu /> */}
         </div>
       </div>
     </header>

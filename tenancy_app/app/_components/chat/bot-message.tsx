@@ -8,7 +8,7 @@ import {
   ThumbsUp,
   ThumbsDown,
 } from "lucide-react";
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useState, useEffect, Fragment } from "react";
 import { ChatRequestOptions } from "ai";
 
 import { cn, pluralise } from "@/lib/utils";
@@ -102,10 +102,21 @@ function Source({ source }: { source: ParsedSource }) {
           {source.title}
         </a>
       </div>
-      <p className="ml-6 text-muted-foreground text-sm mb-2">
-        {pluralise(source.page_labels.length, "Page", "Pages")}{" "}
-        {source.page_labels.join(", ")}
-      </p>
+      <span className="ml-6 text-muted-foreground text-sm mb-2">
+        {pluralise(source.page_labels.length, "Page")}{" "}
+        {source.page_labels.map((pageLabel, index) => (
+          <Fragment key={pageLabel}>
+            <a
+              href={`${source.doc_url}#page=${pageLabel}`}
+              target="_blank"
+              className="underline"
+            >
+              {pageLabel}
+            </a>
+            {index !== source.page_labels.length - 1 && ", "}
+          </Fragment>
+        ))}
+      </span>
     </div>
   );
 }
