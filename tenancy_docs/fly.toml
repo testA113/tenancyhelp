@@ -22,7 +22,7 @@ primary_region = 'syd'
   CHROMA_HOSTNAME= 'chroma-db.fly.dev'
   CHROMA_PORT= '443'
   CHROMA_SSL= true
-  GPT_MODEL= 'gpt-4'
+  GPT_MODEL= 'gpt-4o'
 
 [[vm]]
   memory = '2gb'
