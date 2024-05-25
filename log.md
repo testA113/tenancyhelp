@@ -56,3 +56,15 @@
   - Experiment with function calling (server to query and return indexed docs, then send to open ai assistant api). This gives cool options like:
     - react server components with structured output - e.g. email template, suggest follow up questions
   - Save chats
+
+25/05/24
+
+- I got the small fixes done letting me share!
+- gpt4o released meaning that it's much cheaper, so I just have a captcha and rate limit in place, without needing logins (yet)
+- I'll still keep the converation saving going, so that I can train a gpt4 model when possible.
+- Some of the next steps:
+  - https://tenant.aratohu.nz/ - maybe add this as a source? the material is really good
+  - experiment with adding the healthy homes standards source
+  - Experiment with function calling (server to query and return indexed docs, then send to open ai assistant api). This gives cool options like:
+    - react server components with structured output - e.g. email template, suggest follow up questions
+  - Save chats
