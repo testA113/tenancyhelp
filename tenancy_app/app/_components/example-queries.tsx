@@ -65,6 +65,7 @@ export function ExampleQueries({
               });
             }}
           />
+          <span className="sr-only">Get different suggested questions</span>
         </Button>
       </h2>
       <div className="sm:hidden mx-4 sm:mx-0 grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">

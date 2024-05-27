@@ -216,7 +216,7 @@ function CompletedActions({
           }
         }}
       >
-        <ThumbsUp />
+        <ThumbsUp className={cn(isThumbsUpEventSent && "fill-foreground")} />
         <span className="sr-only">Like</span>
       </Button>
       {/* thumbs down */}
@@ -231,7 +231,9 @@ function CompletedActions({
           }
         }}
       >
-        <ThumbsDown />
+        <ThumbsDown
+          className={cn(isThumbsDownEventSent && "fill-foreground")}
+        />
         <span className="sr-only">Dislike</span>
       </Button>
     </div>
