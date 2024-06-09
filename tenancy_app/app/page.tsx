@@ -56,7 +56,7 @@ export default function Home() {
           <div className="flex flex-col">
             <EmptyScreen />
             {!hasChatStarted && (
-              <div className="tall:hidden">
+              <div className="tall:hidden sm:max-w-2xl sm:px-4 mx-auto">
                 <ExampleQueries setInput={setInput} inputRef={inputRef} />
               </div>
             )}
